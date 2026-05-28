@@ -34,9 +34,15 @@ export default function LoginScreen() {
     }
     setBusy(true);
     try {
-      await login(form);
+      const cleanedLogin = form.login.replace(/^@/, '').trim();
+      await login({ login: cleanedLogin, password: form.password });
     } catch (err) {
-      Alert.alert(t('common.error'), err.displayMessage || t('auth.error'));
+      const errorMessage = err.response?.data?.error || err.displayMessage || t('auth.error');
+      if (errorMessage.includes('Invalid') || errorMessage.includes('not found')) {
+        Alert.alert(t('common.error'), t('auth.invalidCredentials'));
+      } else {
+        Alert.alert(t('common.error'), errorMessage);
+      }
     } finally {
       setBusy(false);
     }
@@ -75,25 +81,27 @@ export default function LoginScreen() {
             </Text>
           </View>
 
-          <PencilFrame filled fillColor={colors.paper} radius={24} padding={20}>
-            <Text style={{ ...typography.title, color: colors.ink, marginBottom: 14 }}>
+          <PencilFrame filled elevated fillColor={colors.paper} radius={24} padding={20}>
+            <Text style={{ ...typography.title, color: colors.ink, marginBottom: 6 }}>
               {t('auth.welcome')}
             </Text>
-            <Text style={{ ...typography.body, color: colors.inkMuted, marginBottom: 18 }}>
+            <Text style={{ ...typography.body, color: colors.inkMuted, marginBottom: 20 }}>
               {t('auth.subtitle')}
             </Text>
             <PencilInput
               label={t('auth.loginOrEmail')}
               value={form.login}
               onChangeText={(login) => setForm({ ...form, login })}
-              placeholder="anna"
+              placeholder={t('auth.usernamePlaceholder')}
+              autoCapitalize="none"
+              autoCorrect={false}
               style={{ marginBottom: 12 }}
             />
             <PencilInput
               label={t('auth.password')}
               value={form.password}
               onChangeText={(password) => setForm({ ...form, password })}
-              placeholder="••••••••"
+              placeholder={t('auth.passwordPlaceholder')}
               secureTextEntry
               style={{ marginBottom: 18 }}
             />

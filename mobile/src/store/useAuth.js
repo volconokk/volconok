@@ -26,13 +26,17 @@ export const useAuth = create((set, get) => ({
   },
 
   async login({ login, password }) {
+    console.log('[Auth] Login started:', login);
     set({ error: null, loading: true });
     try {
+      console.log('[Auth] Sending POST /auth/login...');
       const { data } = await api.post('/auth/login', { login, password });
+      console.log('[Auth] Login response received');
       await setToken(data.token);
       set({ user: data.user, loading: false });
       return data.user;
     } catch (err) {
+      console.log('[Auth] Login error:', err?.displayMessage || err?.message);
       set({ error: err?.displayMessage || 'Login error', loading: false });
       throw err;
     }

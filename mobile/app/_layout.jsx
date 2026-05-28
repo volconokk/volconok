@@ -42,11 +42,15 @@ function AuthGate({ children }) {
   }, [user]);
 
   useEffect(() => {
+    console.log('[AuthGate] Check nav:', { user: !!user, loading, ready, segment: segments[0] });
     if (loading || !ready) return;
     const inAuth = segments[0] === 'auth';
+    const inTabs = segments[0] === '(tabs)';
     if (!user && !inAuth) {
+      console.log('[AuthGate] Redirecting to login');
       router.replace('/auth/login');
-    } else if (user && inAuth) {
+    } else if (user && (inAuth || (!inTabs && segments[0] !== 'post' && segments[0] !== 'user' && segments[0] !== 'chat' && segments[0] !== 'settings' && segments[0] !== 'notifications'))) {
+      console.log('[AuthGate] Redirecting to feed');
       router.replace('/(tabs)/feed');
     }
   }, [user, loading, ready, segments]);

@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
 import { useTheme } from '../theme/ThemeProvider';
 
 export function Avatar({ uri, name = '', size = 44, ring = true }) {
@@ -14,30 +13,23 @@ export function Avatar({ uri, name = '', size = 44, ring = true }) {
     .toUpperCase();
 
   return (
-    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {ring ? (
-        <Svg width={size} height={size} style={{ position: 'absolute' }}>
-          <Circle
-            cx={size / 2}
-            cy={size / 2}
-            r={size / 2 - 1}
-            stroke={colors.line}
-            strokeWidth={1.4}
-            fill={colors.paper}
-          />
-        </Svg>
-      ) : null}
+    <View
+      style={{
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.surface,
+        borderWidth: ring ? 1.5 : 0,
+        borderColor: colors.line,
+        overflow: 'hidden',
+      }}
+    >
       {uri ? (
-        <Image
-          source={{ uri }}
-          style={{
-            width: size - 6,
-            height: size - 6,
-            borderRadius: (size - 6) / 2,
-          }}
-        />
+        <Image source={{ uri }} style={{ width: size, height: size }} resizeMode="cover" />
       ) : (
-        <Text style={{ fontSize: size * 0.38, fontWeight: '700', color: colors.ink }}>
+        <Text style={{ fontSize: size * 0.36, fontWeight: '700', color: colors.ink }}>
           {initials}
         </Text>
       )}

@@ -21,6 +21,7 @@ const detect = () => {
 };
 
 i18n.use(initReactI18next).init({
+  compatibilityJSON: 'v3',
   resources: { ru: { translation: ru }, ro: { translation: ro }, en: { translation: en } },
   lng: detect(),
   fallbackLng: fallback,

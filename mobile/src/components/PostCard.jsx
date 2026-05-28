@@ -17,6 +17,7 @@ export function PostCard({ post, onLike, onOpen, onOpenAuthor }) {
   return (
     <PencilFrame
       filled
+      elevated
       fillColor={colors.paper}
       radius={22}
       padding={16}

@@ -58,7 +58,7 @@ export function Composer({ onPosted }) {
   };
 
   return (
-    <PencilFrame filled fillColor={colors.paper} radius={22} padding={14} style={{ marginBottom: 16 }}>
+    <PencilFrame filled elevated fillColor={colors.paper} radius={22} padding={14} style={{ marginBottom: 16 }}>
       <PencilInput
         value={text}
         onChangeText={setText}

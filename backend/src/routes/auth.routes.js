@@ -17,7 +17,7 @@ function handleValidation(req, res) {
 router.post(
   '/register',
   [
-    body('username').isString().trim().isLength({ min: 3, max: 32 }),
+    body('username').isString().trim().isLength({ min: 3, max: 20 }),
     body('email').isEmail(),
     body('password').isString().isLength({ min: 6, max: 128 }),
     body('displayName').optional().isString().isLength({ max: 64 }),
@@ -26,10 +26,16 @@ router.post(
     try {
       if (handleValidation(req, res)) return;
       const { username, email, password, displayName } = req.body;
-      const exists = await User.findOne({
-        $or: [{ username: username.toLowerCase() }, { email: email.toLowerCase() }],
-      });
-      if (exists) return res.status(409).json({ error: 'User already exists' });
+      
+      const existsByUsername = await User.findOne({ username: username.toLowerCase() });
+      if (existsByUsername) {
+        return res.status(409).json({ error: 'User with this username already exists' });
+      }
+      
+      const existsByEmail = await User.findOne({ email: email.toLowerCase() });
+      if (existsByEmail) {
+        return res.status(409).json({ error: 'User with this email already exists' });
+      }
 
       const user = new User({
         username: username.toLowerCase(),
@@ -71,6 +77,19 @@ router.post(
 
 router.get('/me', authRequired, async (req, res) => {
   res.json({ user: req.user.toPrivateJSON() });
+});
+
+router.get('/check-username', async (req, res) => {
+  try {
+    const { username } = req.query;
+    if (!username || username.length < 3) {
+      return res.json({ available: false });
+    }
+    const exists = await User.findOne({ username: username.toLowerCase() });
+    res.json({ available: !exists });
+  } catch (err) {
+    res.status(500).json({ available: false });
+  }
 });
 
 module.exports = router;
