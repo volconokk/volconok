@@ -74,12 +74,24 @@ router.patch(
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) return res.status(400).json({ error: 'Validation failed' });
+      
+      const updateFields = {};
       const fields = ['displayName', 'bio', 'avatarUrl', 'coverUrl'];
       fields.forEach((f) => {
-        if (req.body[f] !== undefined) req.user[f] = req.body[f];
+        if (req.body[f] !== undefined) updateFields[f] = req.body[f];
       });
-      await req.user.save();
-      res.json({ user: req.user.toPrivateJSON() });
+      
+      if (Object.keys(updateFields).length === 0) {
+        return res.json({ user: req.user.toPrivateJSON() });
+      }
+      
+      const updatedUser = await User.findByIdAndUpdate(
+        req.userId,
+        { $set: updateFields },
+        { new: true }
+      );
+      
+      res.json({ user: updatedUser.toPrivateJSON() });
     } catch (err) {
       next(err);
     }
@@ -89,20 +101,33 @@ router.patch(
 router.patch('/me/settings', authRequired, async (req, res, next) => {
   try {
     const { language, theme, notifications } = req.body || {};
+    const updateFields = {};
+    
     if (language && ['ru', 'ro', 'en'].includes(language)) {
-      req.user.settings.language = language;
+      updateFields['settings.language'] = language;
     }
     if (theme && ['light', 'dark', 'system'].includes(theme)) {
-      req.user.settings.theme = theme;
+      updateFields['settings.theme'] = theme;
     }
     if (notifications && typeof notifications === 'object') {
-      req.user.settings.notifications = {
-        ...req.user.settings.notifications.toObject?.(),
-        ...notifications,
-      };
+      for (const [key, value] of Object.entries(notifications)) {
+        if (['messages', 'likes', 'friendRequests'].includes(key)) {
+          updateFields[`settings.notifications.${key}`] = Boolean(value);
+        }
+      }
     }
-    await req.user.save();
-    res.json({ settings: req.user.settings });
+    
+    if (Object.keys(updateFields).length === 0) {
+      return res.json({ settings: req.user.settings });
+    }
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      { $set: updateFields },
+      { new: true }
+    );
+    
+    res.json({ settings: updatedUser.settings });
   } catch (err) {
     next(err);
   }
