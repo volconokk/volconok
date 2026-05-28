@@ -33,6 +33,8 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 const app = express();
 const server = http.createServer(app);
 
+app.set('trust proxy', 1);
+
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json({ limit: '10mb' }));
