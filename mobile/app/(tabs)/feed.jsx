@@ -11,6 +11,7 @@ import { Composer } from '../../src/components/Composer';
 import { PostCard } from '../../src/components/PostCard';
 import { api } from '../../src/api/client';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { useResponsive } from '../../src/hooks/useResponsive';
 import { useAuth } from '../../src/store/useAuth';
 import { BellIcon, TrashIcon } from '../../src/components/icons';
 import { useSocketEvent } from '../../src/store/useSocket';
@@ -18,6 +19,7 @@ import { useSocketEvent } from '../../src/store/useSocket';
 export default function FeedScreen() {
   const { colors, typography } = useTheme();
   const { t } = useTranslation();
+  const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
@@ -119,9 +121,10 @@ export default function FeedScreen() {
           }
         />
         <FlatList
-          contentContainerStyle={{ padding: 16, paddingBottom: 24 }}
+          contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingVertical: 16, paddingBottom: 24 }}
           data={posts}
           keyExtractor={(p) => p.id}
+          style={{ alignSelf: 'center', width: '100%', maxWidth: contentMaxWidth }}
           ListHeaderComponent={<Composer onPosted={(p) => setPosts((all) => [p, ...all])} />}
           ListEmptyComponent={
             !loading ? (

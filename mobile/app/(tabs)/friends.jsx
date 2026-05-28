@@ -11,12 +11,14 @@ import { PencilButton } from '../../src/components/PencilButton';
 import { Avatar } from '../../src/components/Avatar';
 import { Header } from '../../src/components/Header';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { useResponsive } from '../../src/hooks/useResponsive';
 import { api } from '../../src/api/client';
 import { SearchIcon, CheckIcon, XIcon } from '../../src/components/icons';
 
 export default function FriendsScreen() {
   const { colors, typography } = useTheme();
   const { t } = useTranslation();
+  const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState({ incoming: [], outgoing: [] });
@@ -169,16 +171,18 @@ export default function FriendsScreen() {
       />
       {results.length > 0 ? (
         <View style={{ marginTop: 10 }}>
-          {results.map((u) =>
-            renderFriendRow(
-              u,
-              <PencilButton
-                label={t('friends.add')}
-                size="sm"
-                onPress={() => requestFriend(u.id)}
-              />,
-            ),
-          )}
+          {results.map((u) => (
+            <View key={u.id}>
+              {renderFriendRow(
+                u,
+                <PencilButton
+                  label={t('friends.add')}
+                  size="sm"
+                  onPress={() => requestFriend(u.id)}
+                />,
+              )}
+            </View>
+          ))}
         </View>
       ) : null}
     </View>
@@ -189,9 +193,10 @@ export default function FriendsScreen() {
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
         <Header title={t('friends.title')} />
         <FlatList
-          contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+          contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingVertical: 16, paddingBottom: 32 }}
           data={sections}
           keyExtractor={(s) => s.title}
+          style={{ alignSelf: 'center', width: '100%', maxWidth: contentMaxWidth }}
           ListHeaderComponent={renderSearchHeader()}
           refreshControl={
             <RefreshControl

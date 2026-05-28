@@ -44,3 +44,71 @@ export function timeAgo(date, lng = 'en') {
   }
   return labels.now;
 }
+
+function sameDay(a, b) {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+// Short clock time, e.g. "14:05".
+export function formatTime(date, lng = 'en') {
+  if (!date) return '';
+  const d = new Date(date);
+  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+    try {
+      return new Intl.DateTimeFormat(lng, { hour: '2-digit', minute: '2-digit' }).format(d);
+    } catch (_e) {
+      // fall through
+    }
+  }
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+
+// A header label for grouping messages by day: Today / Yesterday / date.
+export function formatDateSeparator(date, lng = 'en', labels = {}) {
+  if (!date) return '';
+  const d = new Date(date);
+  const now = new Date();
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+
+  if (sameDay(d, now)) return labels.today || 'Today';
+  if (sameDay(d, yesterday)) return labels.yesterday || 'Yesterday';
+
+  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+    try {
+      const sameYear = d.getFullYear() === now.getFullYear();
+      return new Intl.DateTimeFormat(lng, {
+        day: 'numeric',
+        month: 'long',
+        year: sameYear ? undefined : 'numeric',
+      }).format(d);
+    } catch (_e) {
+      // fall through
+    }
+  }
+  return d.toLocaleDateString();
+}
+
+// "Joined March 2026" style label.
+export function formatMonthYear(date, lng = 'en') {
+  if (!date) return '';
+  const d = new Date(date);
+  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+    try {
+      return new Intl.DateTimeFormat(lng, { month: 'long', year: 'numeric' }).format(d);
+    } catch (_e) {
+      // fall through
+    }
+  }
+  return `${d.getMonth() + 1}/${d.getFullYear()}`;
+}
+
+export function isSameDay(a, b) {
+  return sameDay(new Date(a), new Date(b));
+}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, FlatList, Pressable, Alert, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,48 +9,33 @@ import { PencilFrame } from '../src/components/PencilFrame';
 import { Avatar } from '../src/components/Avatar';
 import { Header } from '../src/components/Header';
 import { useTheme } from '../src/theme/ThemeProvider';
+import { useResponsive } from '../src/hooks/useResponsive';
 import { api } from '../src/api/client';
 import { useSocketEvent } from '../src/store/useSocket';
-import { timeAgo } from '../src/utils/time';
-import { HeartIcon, CommentIcon, FriendsIcon, ChatIcon, CheckIcon } from '../src/components/icons';
+import { timeAgo, isSameDay } from '../src/utils/time';
+import { HeartIcon, CommentIcon, FriendsIcon, ChatIcon, CheckIcon, BellIcon } from '../src/components/icons';
 
 function iconFor(type, color) {
   switch (type) {
     case 'like':
-      return <HeartIcon color={color} />;
+      return <HeartIcon size={18} color={color} />;
     case 'comment':
-      return <CommentIcon color={color} />;
+      return <CommentIcon size={18} color={color} />;
     case 'friend_request':
-      return <FriendsIcon color={color} />;
+      return <FriendsIcon size={18} color={color} />;
     case 'friend_accept':
-      return <CheckIcon color={color} />;
+      return <CheckIcon size={18} color={color} />;
     case 'message':
-      return <ChatIcon color={color} />;
+      return <ChatIcon size={18} color={color} />;
     default:
       return null;
-  }
-}
-
-function textFor(type, t) {
-  switch (type) {
-    case 'like':
-      return t('post.like');
-    case 'comment':
-      return t('post.comments');
-    case 'friend_request':
-      return t('friends.add');
-    case 'friend_accept':
-      return t('friends.accept');
-    case 'message':
-      return t('messages.title');
-    default:
-      return '';
   }
 }
 
 export default function NotificationsScreen() {
   const { colors, typography } = useTheme();
   const { t, i18n } = useTranslation();
+  const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const [items, setItems] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -82,14 +67,87 @@ export default function NotificationsScreen() {
     }
   };
 
+  // Build a flat list with section headers for "Today" and "Earlier".
+  const sectioned = useMemo(() => {
+    const now = new Date();
+    const out = [];
+    let lastGroup = null;
+    items.forEach((n) => {
+      const group = isSameDay(n.createdAt, now) ? 'today' : 'earlier';
+      if (group !== lastGroup) {
+        out.push({ type: 'header', id: `h-${group}`, group });
+        lastGroup = group;
+      }
+      out.push({ type: 'item', id: n.id, data: n });
+    });
+    return out;
+  }, [items]);
+
+  const renderItem = ({ item }) => {
+    if (item.type === 'header') {
+      return (
+        <Text
+          style={{
+            ...typography.caption,
+            color: colors.inkMuted,
+            textTransform: 'uppercase',
+            marginTop: 8,
+            marginBottom: 8,
+            marginLeft: 4,
+          }}
+        >
+          {item.group === 'today' ? t('notif.today') : t('notif.earlier')}
+        </Text>
+      );
+    }
+    const n = item.data;
+    return (
+      <PencilFrame
+        filled
+        fillColor={n.read ? colors.paper : colors.surface}
+        radius={16}
+        padding={12}
+        style={{ marginBottom: 10 }}
+      >
+        <Pressable onPress={() => open(n)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {n.actor ? (
+            <Avatar uri={n.actor.avatarUrl} name={n.actor.displayName} size={44} />
+          ) : null}
+          <View style={{ marginLeft: 12, flex: 1 }}>
+            <Text style={{ ...typography.body, color: colors.ink }}>
+              <Text style={{ fontWeight: '700' }}>{n.actor?.displayName}</Text>{' '}
+              {t(`notif.${n.type}`)}
+            </Text>
+            <Text style={{ ...typography.caption, color: colors.inkMuted, marginTop: 2 }}>
+              {timeAgo(n.createdAt, i18n.language)}
+            </Text>
+          </View>
+          <View style={{ marginLeft: 8 }}>{iconFor(n.type, colors.inkMuted)}</View>
+          {!n.read ? (
+            <View
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: colors.accent,
+                marginLeft: 8,
+              }}
+            />
+          ) : null}
+        </Pressable>
+      </PencilFrame>
+    );
+  };
+
   return (
     <PaperBackground>
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
-        <Header back title={t('settings.notifications')} />
+        <Header back title={t('notif.title')} />
         <FlatList
-          contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
-          data={items}
-          keyExtractor={(n) => n.id}
+          contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingVertical: 16, paddingBottom: 32 }}
+          data={sectioned}
+          keyExtractor={(it) => it.id}
+          style={{ alignSelf: 'center', width: '100%', maxWidth: contentMaxWidth }}
           refreshControl={
             <RefreshControl
               tintColor={colors.ink}
@@ -101,39 +159,18 @@ export default function NotificationsScreen() {
             />
           }
           ListEmptyComponent={
-            <PencilFrame filled fillColor={colors.paper} radius={18} padding={16}>
-              <Text style={{ ...typography.body, color: colors.inkMuted, textAlign: 'center' }}>
-                {t('friends.noRequests')}
-              </Text>
-            </PencilFrame>
-          }
-          renderItem={({ item }) => (
-            <PencilFrame
-              filled
-              fillColor={item.read ? colors.paper : colors.surface}
-              radius={16}
-              padding={12}
-              style={{ marginBottom: 10 }}
-            >
-              <Pressable
-                onPress={() => open(item)}
-                style={{ flexDirection: 'row', alignItems: 'center' }}
+            <View style={{ alignItems: 'center', marginTop: 60, paddingHorizontal: 32 }}>
+              <PencilFrame filled fillColor={colors.paper} radius={28} padding={20}>
+                <BellIcon size={36} color={colors.inkMuted} />
+              </PencilFrame>
+              <Text
+                style={{ ...typography.body, color: colors.inkMuted, marginTop: 16, textAlign: 'center' }}
               >
-                {item.actor ? (
-                  <Avatar uri={item.actor.avatarUrl} name={item.actor.displayName} size={42} />
-                ) : null}
-                <View style={{ marginLeft: 12, flex: 1 }}>
-                  <Text style={{ ...typography.subtitle, color: colors.ink }}>
-                    {item.actor?.displayName}
-                  </Text>
-                  <Text style={{ ...typography.caption, color: colors.inkMuted }}>
-                    {textFor(item.type, t)} · {timeAgo(item.createdAt, i18n.language)}
-                  </Text>
-                </View>
-                {iconFor(item.type, colors.ink)}
-              </Pressable>
-            </PencilFrame>
-          )}
+                {t('notif.empty')}
+              </Text>
+            </View>
+          }
+          renderItem={renderItem}
         />
       </SafeAreaView>
     </PaperBackground>

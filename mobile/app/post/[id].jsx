@@ -1,13 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Alert,
-} from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, FlatList, Pressable, Alert } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +10,7 @@ import { PencilInput } from '../../src/components/PencilInput';
 import { Avatar } from '../../src/components/Avatar';
 import { PostCard } from '../../src/components/PostCard';
 import { Header } from '../../src/components/Header';
+import { KeyboardAvoidingScreen } from '../../src/components/KeyboardAvoidingScreen';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { api } from '../../src/api/client';
 import { SendIcon, HeartIcon } from '../../src/components/icons';
@@ -31,6 +24,7 @@ export default function PostScreen() {
   const [comments, setComments] = useState([]);
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
+  const listRef = useRef(null);
 
   const load = useCallback(async () => {
     try {
@@ -80,12 +74,49 @@ export default function PostScreen() {
     <PaperBackground>
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
         <Header back title={t('post.comments')} />
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={{ flex: 1 }}
-          keyboardVerticalOffset={80}
+        <KeyboardAvoidingScreen
+          footer={
+            <View
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 10,
+                borderTopWidth: 1,
+                borderTopColor: colors.lineSoft,
+                backgroundColor: colors.paper,
+                flexDirection: 'row',
+                alignItems: 'flex-end',
+                gap: 8,
+              }}
+            >
+              <View style={{ flex: 1 }}>
+                <PencilInput
+                  value={text}
+                  onChangeText={setText}
+                  placeholder={t('post.commentPlaceholder')}
+                  multiline
+                  maxLength={1000}
+                />
+              </View>
+              <Pressable
+                disabled={busy || !text.trim()}
+                onPress={send}
+                style={({ pressed }) => ({
+                  width: 48,
+                  height: 48,
+                  borderRadius: 24,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: text.trim() ? colors.accent : colors.surface,
+                  opacity: pressed ? 0.7 : 1,
+                })}
+              >
+                <SendIcon color={text.trim() ? colors.accentInk : colors.inkFaint} />
+              </Pressable>
+            </View>
+          }
         >
           <FlatList
+            ref={listRef}
             contentContainerStyle={{ padding: 16, paddingBottom: 24 }}
             data={comments}
             keyExtractor={(c) => c.id}
@@ -150,37 +181,7 @@ export default function PostScreen() {
               </PencilFrame>
             )}
           />
-          <View
-            style={{
-              padding: 12,
-              borderTopWidth: 1,
-              borderTopColor: colors.lineSoft,
-              backgroundColor: colors.paper,
-              flexDirection: 'row',
-              alignItems: 'flex-end',
-              gap: 8,
-            }}
-          >
-            <View style={{ flex: 1 }}>
-              <PencilInput
-                value={text}
-                onChangeText={setText}
-                placeholder={t('post.commentPlaceholder')}
-                multiline
-              />
-            </View>
-            <Pressable
-              disabled={busy || !text.trim()}
-              onPress={send}
-              style={({ pressed }) => ({
-                padding: 12,
-                opacity: !text.trim() ? 0.3 : pressed ? 0.5 : 1,
-              })}
-            >
-              <SendIcon color={colors.ink} />
-            </Pressable>
-          </View>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingScreen>
       </SafeAreaView>
     </PaperBackground>
   );

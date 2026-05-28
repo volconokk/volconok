@@ -10,14 +10,20 @@ import { PencilButton } from '../../src/components/PencilButton';
 import { Avatar } from '../../src/components/Avatar';
 import { PostCard } from '../../src/components/PostCard';
 import { Header } from '../../src/components/Header';
+import { ProfileStats } from '../../src/components/ProfileStats';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { useResponsive } from '../../src/hooks/useResponsive';
 import { api } from '../../src/api/client';
 import { ChatIcon } from '../../src/components/icons';
+import { formatMonthYear, timeAgo } from '../../src/utils/time';
+
+const ONLINE_THRESHOLD_MS = 2 * 60 * 1000;
 
 export default function UserScreen() {
   const { username } = useLocalSearchParams();
   const { colors, typography } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [friendship, setFriendship] = useState(null);
@@ -39,6 +45,10 @@ export default function UserScreen() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const isOnline =
+    user?.online ??
+    (user?.lastSeenAt && Date.now() - new Date(user.lastSeenAt).getTime() < ONLINE_THRESHOLD_MS);
 
   const renderFriendButton = () => {
     if (!user) return null;
@@ -89,44 +99,100 @@ export default function UserScreen() {
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
         <Header back title={user?.displayName || ''} />
         <FlatList
-          contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+          contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingVertical: 16, paddingBottom: 32 }}
           data={posts}
           keyExtractor={(p) => p.id}
+          style={{ alignSelf: 'center', width: '100%', maxWidth: contentMaxWidth }}
           ListHeaderComponent={
             user ? (
               <PencilFrame
                 filled
+                elevated
                 fillColor={colors.paper}
                 radius={22}
                 padding={18}
                 style={{ marginBottom: 16 }}
               >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Avatar uri={user.avatarUrl} name={user.displayName} size={72} />
-                  <View style={{ marginLeft: 16, flex: 1 }}>
-                    <Text style={{ ...typography.title, color: colors.ink }}>
-                      {user.displayName}
-                    </Text>
-                    <Text style={{ ...typography.caption, color: colors.inkMuted }}>
-                      @{user.username}
-                    </Text>
+                <View style={{ alignItems: 'center' }}>
+                  <View>
+                    <Avatar uri={user.avatarUrl} name={user.displayName} size={88} />
+                    {isOnline ? (
+                      <View
+                        style={{
+                          position: 'absolute',
+                          right: 2,
+                          bottom: 2,
+                          width: 18,
+                          height: 18,
+                          borderRadius: 9,
+                          backgroundColor: colors.success,
+                          borderWidth: 2,
+                          borderColor: colors.paper,
+                        }}
+                      />
+                    ) : null}
                   </View>
-                </View>
-                {user.bio ? (
-                  <Text style={{ ...typography.body, color: colors.ink, marginTop: 12 }}>
-                    {user.bio}
+                  <Text style={{ ...typography.title, color: colors.ink, marginTop: 12 }}>
+                    {user.displayName}
                   </Text>
-                ) : null}
-                <View style={{ flexDirection: 'row', marginTop: 14, gap: 8 }}>
+                  <Text style={{ ...typography.caption, color: colors.inkMuted, marginTop: 2 }}>
+                    @{user.username}
+                  </Text>
+                  <Text
+                    style={{
+                      ...typography.caption,
+                      color: isOnline ? colors.success : colors.inkFaint,
+                      marginTop: 4,
+                    }}
+                  >
+                    {isOnline
+                      ? t('profile.online')
+                      : user.lastSeenAt
+                        ? t('profile.lastSeen', { time: timeAgo(user.lastSeenAt, i18n.language) })
+                        : ''}
+                  </Text>
+                  {user.bio ? (
+                    <Text
+                      style={{
+                        ...typography.body,
+                        color: colors.ink,
+                        marginTop: 10,
+                        textAlign: 'center',
+                      }}
+                    >
+                      {user.bio}
+                    </Text>
+                  ) : null}
+                  {user.createdAt ? (
+                    <Text style={{ ...typography.caption, color: colors.inkFaint, marginTop: 8 }}>
+                      {t('profile.memberSince', {
+                        date: formatMonthYear(user.createdAt, i18n.language),
+                      })}
+                    </Text>
+                  ) : null}
+                </View>
+
+                <ProfileStats postsCount={user.postsCount} friendsCount={user.friendsCount} />
+
+                <View style={{ flexDirection: 'row', marginTop: 14, gap: 8, justifyContent: 'center' }}>
                   {renderFriendButton()}
                   <PencilButton
-                    label={t('messages.send')}
+                    label={t('profile.message')}
                     size="sm"
                     variant="ghost"
                     icon={<ChatIcon size={16} color={colors.ink} />}
                     onPress={() => router.push(`/chat/${user.id}`)}
                   />
                 </View>
+              </PencilFrame>
+            ) : null
+          }
+          ListEmptyComponent={
+            user ? (
+              <PencilFrame filled fillColor={colors.paper} radius={16} padding={20}>
+                <Text style={{ ...typography.body, color: colors.inkMuted, textAlign: 'center' }}>
+                  {t('profile.noPosts')}
+                </Text>
               </PencilFrame>
             ) : null
           }

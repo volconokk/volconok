@@ -65,6 +65,9 @@ export function Composer({ onPosted }) {
         placeholder={t('feed.newPost')}
         multiline
         numberOfLines={3}
+        maxLength={2000}
+        showCounter={text.length > 1500}
+        autoCapitalize="sentences"
       />
       {images.length > 0 ? (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 10 }}>

@@ -1,7 +1,12 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 let ioRef = null;
 const userSockets = new Map();
+
+function touchLastSeen(userId) {
+  User.updateOne({ _id: userId }, { $set: { lastSeenAt: new Date() } }).catch(() => {});
+}
 
 function initSocket(io) {
   ioRef = io;
@@ -27,6 +32,9 @@ function initSocket(io) {
     userSockets.set(uid, set);
 
     socket.join(`user:${uid}`);
+    touchLastSeen(uid);
+    // Let others know this user just came online.
+    socket.broadcast.emit('presence', { userId: uid, online: true });
 
     socket.on('typing', ({ to, typing }) => {
       if (to) io.to(`user:${to}`).emit('typing', { from: uid, typing: !!typing });
@@ -36,10 +44,19 @@ function initSocket(io) {
       const s = userSockets.get(uid);
       if (s) {
         s.delete(socket.id);
-        if (s.size === 0) userSockets.delete(uid);
+        if (s.size === 0) {
+          userSockets.delete(uid);
+          touchLastSeen(uid);
+          socket.broadcast.emit('presence', { userId: uid, online: false });
+        }
       }
     });
   });
+}
+
+function isUserOnline(userId) {
+  const set = userSockets.get(String(userId));
+  return !!(set && set.size > 0);
 }
 
 function emitToUser(userId, event, payload) {
@@ -47,4 +64,4 @@ function emitToUser(userId, event, payload) {
   ioRef.to(`user:${userId}`).emit(event, payload);
 }
 
-module.exports = { initSocket, emitToUser };
+module.exports = { initSocket, emitToUser, isUserOnline };

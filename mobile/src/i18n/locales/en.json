@@ -78,18 +78,44 @@
   "messages": {
     "title": "Chats",
     "empty": "Your conversations will appear here",
-    "placeholder": "Message…",
-    "send": "Send",
-    "typing": "typing…"
+    "emptyHint": "Find friends and start chatting",
+    "placeholder": "Type a message…",
+    "send": "Message",
+    "typing": "typing…",
+    "startConversation": "Send the first message",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "online": "online",
+    "delivered": "delivered",
+    "read": "read"
   },
   "profile": {
     "edit": "Edit profile",
     "save": "Save",
     "bio": "About",
+    "bioPlaceholder": "Tell a little about yourself…",
     "displayName": "Name",
     "posts": "Posts",
     "friends": "Friends",
-    "changeAvatar": "Change avatar"
+    "changeAvatar": "Change photo",
+    "message": "Message",
+    "online": "online",
+    "lastSeen": "last seen {{time}}",
+    "memberSince": "Joined {{date}}",
+    "noPosts": "No posts yet",
+    "noPostsOwn": "You have no posts yet. Share something!"
+  },
+  "notif": {
+    "title": "Notifications",
+    "today": "Today",
+    "earlier": "Earlier",
+    "markAllRead": "Mark all read",
+    "empty": "No notifications yet",
+    "like": "liked your post",
+    "comment": "commented on your post",
+    "friend_request": "sent you a friend request",
+    "friend_accept": "accepted your friend request",
+    "message": "sent you a message"
   },
   "settings": {
     "title": "Settings",
@@ -113,6 +139,8 @@
     "back": "Back",
     "loading": "Loading…",
     "error": "Something went wrong",
-    "retry": "Retry"
+    "retry": "Retry",
+    "today": "Today",
+    "yesterday": "Yesterday"
   }
 }

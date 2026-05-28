@@ -1,27 +1,23 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Pressable,
-  Alert,
-} from 'react-native';
+import { View, Text, Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { PaperBackground } from '../../src/components/PaperBackground';
 import { PencilFrame } from '../../src/components/PencilFrame';
 import { PencilButton } from '../../src/components/PencilButton';
 import { PencilInput } from '../../src/components/PencilInput';
+import { KeyboardAwareForm } from '../../src/components/KeyboardAvoidingScreen';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { useResponsive } from '../../src/hooks/useResponsive';
 import { useAuth } from '../../src/store/useAuth';
 import { PencilIcon } from '../../src/components/icons';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
   const { colors, typography } = useTheme();
+  const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const { login } = useAuth();
   const [form, setForm] = useState({ login: '', password: '' });
@@ -50,14 +46,16 @@ export default function LoginScreen() {
 
   return (
     <PaperBackground>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{ flex: 1 }}
-      >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1, padding: 24, justifyContent: 'center' }}
-          keyboardShouldPersistTaps="handled"
+      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+        <KeyboardAwareForm
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: horizontalPadding,
+            paddingVertical: 24,
+            justifyContent: 'center',
+          }}
         >
+          <View style={{ width: '100%', maxWidth: contentMaxWidth, alignSelf: 'center' }}>
           <View style={{ alignItems: 'center', marginBottom: 28 }}>
             <PencilFrame
               radius={32}
@@ -123,8 +121,9 @@ export default function LoginScreen() {
               </Text>
             </Pressable>
           </PencilFrame>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          </View>
+        </KeyboardAwareForm>
+      </SafeAreaView>
     </PaperBackground>
   );
 }

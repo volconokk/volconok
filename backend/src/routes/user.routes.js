@@ -2,9 +2,22 @@ const express = require('express');
 const { body, query, validationResult } = require('express-validator');
 const User = require('../models/User');
 const Friendship = require('../models/Friendship');
+const Post = require('../models/Post');
 const { authRequired } = require('../middleware/auth');
+const { isUserOnline } = require('../realtime/socket');
 
 const router = express.Router();
+
+async function getUserStats(userId) {
+  const [postsCount, friendsCount] = await Promise.all([
+    Post.countDocuments({ author: userId }),
+    Friendship.countDocuments({
+      status: 'accepted',
+      $or: [{ requester: userId }, { recipient: userId }],
+    }),
+  ]);
+  return { postsCount, friendsCount };
+}
 
 router.get('/search', authRequired, [query('q').isString().notEmpty()], async (req, res, next) => {
   try {
@@ -33,6 +46,15 @@ router.get('/search', authRequired, [query('q').isString().notEmpty()], async (r
   }
 });
 
+router.get('/me/stats', authRequired, async (req, res, next) => {
+  try {
+    const stats = await getUserStats(req.userId);
+    res.json(stats);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/:idOrUsername', authRequired, async (req, res, next) => {
   try {
     const { idOrUsername } = req.params;
@@ -41,14 +63,17 @@ router.get('/:idOrUsername', authRequired, async (req, res, next) => {
       : User.findOne({ username: idOrUsername.toLowerCase() }));
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const friendship = await Friendship.findOne({
-      $or: [
-        { requester: req.userId, recipient: user._id },
-        { requester: user._id, recipient: req.userId },
-      ],
-    });
+    const [friendship, stats] = await Promise.all([
+      Friendship.findOne({
+        $or: [
+          { requester: req.userId, recipient: user._id },
+          { requester: user._id, recipient: req.userId },
+        ],
+      }),
+      getUserStats(user._id),
+    ]);
     res.json({
-      user: user.toPublicJSON(),
+      user: { ...user.toPublicJSON(), ...stats, online: isUserOnline(user._id) },
       friendship: friendship
         ? {
             status: friendship.status,

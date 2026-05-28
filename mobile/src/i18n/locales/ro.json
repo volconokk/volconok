@@ -78,18 +78,44 @@
   "messages": {
     "title": "Mesaje",
     "empty": "Conversațiile vor apărea aici",
-    "placeholder": "Mesaj…",
-    "send": "Trimite",
-    "typing": "scrie…"
+    "emptyHint": "Găsește prieteni și începe o conversație",
+    "placeholder": "Scrie un mesaj…",
+    "send": "Mesaj",
+    "typing": "scrie…",
+    "startConversation": "Trimite primul mesaj",
+    "today": "Azi",
+    "yesterday": "Ieri",
+    "online": "online",
+    "delivered": "livrat",
+    "read": "citit"
   },
   "profile": {
     "edit": "Editează profil",
     "save": "Salvează",
     "bio": "Despre",
+    "bioPlaceholder": "Spune câte ceva despre tine…",
     "displayName": "Nume",
     "posts": "Postări",
     "friends": "Prieteni",
-    "changeAvatar": "Schimbă avatarul"
+    "changeAvatar": "Schimbă poza",
+    "message": "Mesaj",
+    "online": "online",
+    "lastSeen": "văzut {{time}}",
+    "memberSince": "Membru din {{date}}",
+    "noPosts": "Nicio postare încă",
+    "noPostsOwn": "Nu ai postări încă. Împărtășește ceva!"
+  },
+  "notif": {
+    "title": "Notificări",
+    "today": "Azi",
+    "earlier": "Mai devreme",
+    "markAllRead": "Marchează toate",
+    "empty": "Nicio notificare încă",
+    "like": "a apreciat postarea ta",
+    "comment": "a comentat la postarea ta",
+    "friend_request": "ți-a trimis o cerere de prietenie",
+    "friend_accept": "ți-a acceptat cererea de prietenie",
+    "message": "ți-a trimis un mesaj"
   },
   "settings": {
     "title": "Setări",
@@ -113,6 +139,8 @@
     "back": "Înapoi",
     "loading": "Se încarcă…",
     "error": "Ceva n-a mers",
-    "retry": "Reîncearcă"
+    "retry": "Reîncearcă",
+    "today": "Azi",
+    "yesterday": "Ieri"
   }
 }

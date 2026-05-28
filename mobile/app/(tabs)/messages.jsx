@@ -9,13 +9,16 @@ import { PencilFrame } from '../../src/components/PencilFrame';
 import { Avatar } from '../../src/components/Avatar';
 import { Header } from '../../src/components/Header';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { useResponsive } from '../../src/hooks/useResponsive';
 import { api } from '../../src/api/client';
 import { useSocketEvent } from '../../src/store/useSocket';
 import { timeAgo } from '../../src/utils/time';
+import { ChatIcon } from '../../src/components/icons';
 
 export default function MessagesScreen() {
   const { colors, typography } = useTheme();
   const { t, i18n } = useTranslation();
+  const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const [threads, setThreads] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -45,9 +48,10 @@ export default function MessagesScreen() {
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
         <Header title={t('messages.title')} />
         <FlatList
-          contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+          contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingVertical: 16, paddingBottom: 32 }}
           data={threads}
           keyExtractor={(t) => t.peer?.id || Math.random().toString()}
+          style={{ alignSelf: 'center', width: '100%', maxWidth: contentMaxWidth }}
           refreshControl={
             <RefreshControl
               tintColor={colors.ink}
@@ -59,11 +63,21 @@ export default function MessagesScreen() {
             />
           }
           ListEmptyComponent={
-            <PencilFrame filled fillColor={colors.paper} radius={18} padding={16}>
-              <Text style={{ ...typography.body, color: colors.inkMuted, textAlign: 'center' }}>
+            <View style={{ alignItems: 'center', marginTop: 60, paddingHorizontal: 32 }}>
+              <PencilFrame filled fillColor={colors.paper} radius={28} padding={20}>
+                <ChatIcon size={36} color={colors.inkMuted} />
+              </PencilFrame>
+              <Text
+                style={{ ...typography.subtitle, color: colors.ink, marginTop: 16, textAlign: 'center' }}
+              >
                 {t('messages.empty')}
               </Text>
-            </PencilFrame>
+              <Text
+                style={{ ...typography.body, color: colors.inkMuted, marginTop: 6, textAlign: 'center' }}
+              >
+                {t('messages.emptyHint')}
+              </Text>
+            </View>
           }
           renderItem={({ item }) => {
             if (!item.peer) return null;

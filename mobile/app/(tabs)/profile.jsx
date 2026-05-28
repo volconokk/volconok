@@ -11,24 +11,33 @@ import { PencilButton } from '../../src/components/PencilButton';
 import { Avatar } from '../../src/components/Avatar';
 import { PostCard } from '../../src/components/PostCard';
 import { Header } from '../../src/components/Header';
+import { ProfileStats } from '../../src/components/ProfileStats';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { useResponsive } from '../../src/hooks/useResponsive';
 import { useAuth } from '../../src/store/useAuth';
 import { api, uploadImage } from '../../src/api/client';
 import { SettingsIcon, PencilIcon } from '../../src/components/icons';
+import { formatMonthYear } from '../../src/utils/time';
 
 export default function ProfileScreen() {
   const { colors, typography } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const { user, updateProfile } = useAuth();
   const [posts, setPosts] = useState([]);
+  const [stats, setStats] = useState({ postsCount: 0, friendsCount: 0 });
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
     if (!user) return;
     try {
-      const { data } = await api.get(`/posts/user/${user.id}`);
-      setPosts(data.posts);
+      const [p, s] = await Promise.all([
+        api.get(`/posts/user/${user.id}`),
+        api.get('/users/me/stats'),
+      ]);
+      setPosts(p.data.posts);
+      setStats(s.data);
     } catch (_e) {
       // ignore
     } finally {
@@ -76,9 +85,10 @@ export default function ProfileScreen() {
           }
         />
         <FlatList
-          contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+          contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingVertical: 16, paddingBottom: 32 }}
           data={posts}
           keyExtractor={(p) => p.id}
+          style={{ alignSelf: 'center', width: '100%', maxWidth: contentMaxWidth }}
           refreshControl={
             <RefreshControl
               tintColor={colors.ink}
@@ -92,49 +102,85 @@ export default function ProfileScreen() {
           ListHeaderComponent={
             <PencilFrame
               filled
+              elevated
               fillColor={colors.paper}
               radius={22}
               padding={18}
               style={{ marginBottom: 16 }}
             >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ alignItems: 'center' }}>
                 <Pressable onPress={changeAvatar}>
-                  <Avatar uri={user.avatarUrl} name={user.displayName} size={72} />
+                  <Avatar uri={user.avatarUrl} name={user.displayName} size={88} />
+                  <View
+                    style={{
+                      position: 'absolute',
+                      right: -2,
+                      bottom: -2,
+                      backgroundColor: colors.accent,
+                      borderRadius: 14,
+                      width: 28,
+                      height: 28,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 2,
+                      borderColor: colors.paper,
+                    }}
+                  >
+                    <PencilIcon size={14} color={colors.accentInk} />
+                  </View>
                 </Pressable>
-                <View style={{ marginLeft: 16, flex: 1 }}>
-                  <Text style={{ ...typography.title, color: colors.ink }}>
-                    {user.displayName || user.username}
-                  </Text>
-                  <Text style={{ ...typography.caption, color: colors.inkMuted }}>
-                    @{user.username}
-                  </Text>
-                </View>
-              </View>
-              {user.bio ? (
-                <Text style={{ ...typography.body, color: colors.ink, marginTop: 12 }}>
-                  {user.bio}
+                <Text style={{ ...typography.title, color: colors.ink, marginTop: 12 }}>
+                  {user.displayName || user.username}
                 </Text>
-              ) : null}
+                <Text style={{ ...typography.caption, color: colors.inkMuted, marginTop: 2 }}>
+                  @{user.username}
+                </Text>
+                {user.bio ? (
+                  <Text
+                    style={{
+                      ...typography.body,
+                      color: colors.ink,
+                      marginTop: 10,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {user.bio}
+                  </Text>
+                ) : null}
+                {user.createdAt ? (
+                  <Text style={{ ...typography.caption, color: colors.inkFaint, marginTop: 8 }}>
+                    {t('profile.memberSince', {
+                      date: formatMonthYear(user.createdAt, i18n.language),
+                    })}
+                  </Text>
+                ) : null}
+              </View>
+
+              <ProfileStats postsCount={stats.postsCount} friendsCount={stats.friendsCount} />
+
               <View style={{ flexDirection: 'row', marginTop: 14, gap: 8 }}>
                 <PencilButton
                   label={t('profile.edit')}
                   size="sm"
+                  fullWidth
+                  style={{ flex: 1 }}
                   icon={<PencilIcon size={16} color={colors.accentInk} />}
                   onPress={() => router.push('/profile/edit')}
                 />
                 <PencilButton
-                  label={t('profile.changeAvatar')}
+                  label={t('settings.title')}
                   size="sm"
                   variant="ghost"
-                  onPress={changeAvatar}
+                  icon={<SettingsIcon size={16} color={colors.ink} />}
+                  onPress={() => router.push('/settings')}
                 />
               </View>
             </PencilFrame>
           }
           ListEmptyComponent={
-            <PencilFrame filled fillColor={colors.paper} radius={16} padding={16}>
+            <PencilFrame filled fillColor={colors.paper} radius={16} padding={20}>
               <Text style={{ ...typography.body, color: colors.inkMuted, textAlign: 'center' }}>
-                {t('feed.empty')}
+                {t('profile.noPostsOwn')}
               </Text>
             </PencilFrame>
           }

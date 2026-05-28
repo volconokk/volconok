@@ -1,28 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Pressable,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import { PaperBackground } from '../../src/components/PaperBackground';
 import { PencilFrame } from '../../src/components/PencilFrame';
 import { PencilButton } from '../../src/components/PencilButton';
 import { PencilInput } from '../../src/components/PencilInput';
+import { KeyboardAwareForm } from '../../src/components/KeyboardAvoidingScreen';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { useResponsive } from '../../src/hooks/useResponsive';
 import { useAuth } from '../../src/store/useAuth';
-import { client } from '../../src/api/client';
+import { api } from '../../src/api/client';
 
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const { colors, typography } = useTheme();
+  const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const { register } = useAuth();
   const [form, setForm] = useState({
@@ -55,7 +50,7 @@ export default function RegisterScreen() {
 
       setUsernameState({ checking: true, available: null, error: null });
       try {
-        const { data } = await client.get(`/auth/check-username?username=${encodeURIComponent(cleaned)}`);
+        const { data } = await api.get('/auth/check-username', { params: { username: cleaned } });
         setUsernameState({ checking: false, available: data.available, error: null });
       } catch (err) {
         setUsernameState({ checking: false, available: null, error: null });
@@ -172,14 +167,16 @@ export default function RegisterScreen() {
 
   return (
     <PaperBackground>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{ flex: 1 }}
-      >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1, padding: 24, justifyContent: 'center' }}
-          keyboardShouldPersistTaps="handled"
+      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+        <KeyboardAwareForm
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: horizontalPadding,
+            paddingVertical: 24,
+            justifyContent: 'center',
+          }}
         >
+          <View style={{ width: '100%', maxWidth: contentMaxWidth, alignSelf: 'center' }}>
           <View style={{ marginBottom: 18 }}>
             <Text style={{ ...typography.display, color: colors.ink }}>
               {t('auth.registerTitle')}
@@ -266,8 +263,9 @@ export default function RegisterScreen() {
               </Text>
             </Pressable>
           </PencilFrame>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          </View>
+        </KeyboardAwareForm>
+      </SafeAreaView>
     </PaperBackground>
   );
 }
