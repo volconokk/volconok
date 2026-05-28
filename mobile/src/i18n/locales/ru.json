@@ -1,0 +1,102 @@
+{
+  "app": {
+    "name": "Volconok",
+    "tagline": "Социальная сеть в стиле карандашных набросков"
+  },
+  "auth": {
+    "welcome": "Добро пожаловать",
+    "subtitle": "Войдите или создайте новый альбом — ваш профиль в Volconok",
+    "login": "Войти",
+    "register": "Регистрация",
+    "loginOrEmail": "Логин или email",
+    "email": "Email",
+    "username": "Имя пользователя",
+    "displayName": "Отображаемое имя",
+    "password": "Пароль",
+    "noAccount": "Нет аккаунта?",
+    "haveAccount": "Уже есть аккаунт?",
+    "signIn": "Войти",
+    "createAccount": "Создать аккаунт",
+    "logout": "Выйти",
+    "error": "Не удалось войти. Проверьте данные.",
+    "fillFields": "Заполните все поля"
+  },
+  "tabs": {
+    "feed": "Лента",
+    "friends": "Друзья",
+    "messages": "Сообщения",
+    "profile": "Профиль"
+  },
+  "feed": {
+    "title": "Лента",
+    "empty": "Лента пока пуста. Добавьте друзей или напишите первый пост!",
+    "newPost": "Что нового?",
+    "publish": "Опубликовать",
+    "addImage": "Фото",
+    "deletePost": "Удалить пост?",
+    "delete": "Удалить",
+    "cancel": "Отмена"
+  },
+  "post": {
+    "like": "Нравится",
+    "comments": "Комментарии",
+    "commentPlaceholder": "Добавить комментарий…",
+    "send": "Отправить",
+    "noComments": "Пока нет комментариев"
+  },
+  "friends": {
+    "title": "Друзья",
+    "search": "Поиск пользователей",
+    "myFriends": "Мои друзья",
+    "requests": "Заявки",
+    "incoming": "Входящие",
+    "outgoing": "Исходящие",
+    "accept": "Принять",
+    "decline": "Отклонить",
+    "add": "Добавить",
+    "remove": "Удалить",
+    "pending": "Заявка отправлена",
+    "noFriends": "У вас пока нет друзей",
+    "noRequests": "Нет новых заявок"
+  },
+  "messages": {
+    "title": "Сообщения",
+    "empty": "Здесь появятся ваши диалоги",
+    "placeholder": "Сообщение…",
+    "send": "Отправить",
+    "typing": "печатает…"
+  },
+  "profile": {
+    "edit": "Редактировать профиль",
+    "save": "Сохранить",
+    "bio": "О себе",
+    "displayName": "Имя",
+    "posts": "Посты",
+    "friends": "Друзья",
+    "changeAvatar": "Сменить аватар"
+  },
+  "settings": {
+    "title": "Настройки",
+    "language": "Язык",
+    "theme": "Тема",
+    "themeLight": "Светлая",
+    "themeDark": "Тёмная",
+    "themeSystem": "Системная",
+    "notifications": "Уведомления",
+    "notifMessages": "Сообщения",
+    "notifLikes": "Лайки",
+    "notifFriends": "Заявки в друзья",
+    "about": "О приложении",
+    "logout": "Выйти из аккаунта"
+  },
+  "common": {
+    "ok": "ОК",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "back": "Назад",
+    "loading": "Загрузка…",
+    "error": "Что-то пошло не так",
+    "retry": "Повторить"
+  }
+}

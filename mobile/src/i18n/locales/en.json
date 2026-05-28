@@ -1,0 +1,102 @@
+{
+  "app": {
+    "name": "Volconok",
+    "tagline": "A sketchbook-style social network"
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "subtitle": "Sign in or open a new sketchbook — your Volconok profile",
+    "login": "Sign in",
+    "register": "Sign up",
+    "loginOrEmail": "Username or email",
+    "email": "Email",
+    "username": "Username",
+    "displayName": "Display name",
+    "password": "Password",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "logout": "Log out",
+    "error": "Could not sign in. Check your credentials.",
+    "fillFields": "Please fill in all fields"
+  },
+  "tabs": {
+    "feed": "Feed",
+    "friends": "Friends",
+    "messages": "Chats",
+    "profile": "Profile"
+  },
+  "feed": {
+    "title": "Feed",
+    "empty": "Your feed is empty. Add friends or post your first sketch!",
+    "newPost": "What's new?",
+    "publish": "Publish",
+    "addImage": "Photo",
+    "deletePost": "Delete this post?",
+    "delete": "Delete",
+    "cancel": "Cancel"
+  },
+  "post": {
+    "like": "Like",
+    "comments": "Comments",
+    "commentPlaceholder": "Add a comment…",
+    "send": "Send",
+    "noComments": "No comments yet"
+  },
+  "friends": {
+    "title": "Friends",
+    "search": "Search users",
+    "myFriends": "My friends",
+    "requests": "Requests",
+    "incoming": "Incoming",
+    "outgoing": "Outgoing",
+    "accept": "Accept",
+    "decline": "Decline",
+    "add": "Add",
+    "remove": "Remove",
+    "pending": "Request sent",
+    "noFriends": "You don't have any friends yet",
+    "noRequests": "No new requests"
+  },
+  "messages": {
+    "title": "Chats",
+    "empty": "Your conversations will appear here",
+    "placeholder": "Message…",
+    "send": "Send",
+    "typing": "typing…"
+  },
+  "profile": {
+    "edit": "Edit profile",
+    "save": "Save",
+    "bio": "About",
+    "displayName": "Name",
+    "posts": "Posts",
+    "friends": "Friends",
+    "changeAvatar": "Change avatar"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "notifications": "Notifications",
+    "notifMessages": "Messages",
+    "notifLikes": "Likes",
+    "notifFriends": "Friend requests",
+    "about": "About",
+    "logout": "Log out"
+  },
+  "common": {
+    "ok": "OK",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "back": "Back",
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Retry"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "app": {
+    "name": "Volconok",
+    "tagline": "O rețea socială desenată în creion"
+  },
+  "auth": {
+    "welcome": "Bun venit",
+    "subtitle": "Conectează-te sau deschide un caiet nou — profilul tău Volconok",
+    "login": "Conectare",
+    "register": "Înregistrare",
+    "loginOrEmail": "Utilizator sau email",
+    "email": "Email",
+    "username": "Nume utilizator",
+    "displayName": "Nume afișat",
+    "password": "Parolă",
+    "noAccount": "Nu ai cont?",
+    "haveAccount": "Ai deja cont?",
+    "signIn": "Intră",
+    "createAccount": "Creează cont",
+    "logout": "Ieșire",
+    "error": "Conectare eșuată. Verifică datele.",
+    "fillFields": "Completează toate câmpurile"
+  },
+  "tabs": {
+    "feed": "Flux",
+    "friends": "Prieteni",
+    "messages": "Mesaje",
+    "profile": "Profil"
+  },
+  "feed": {
+    "title": "Flux",
+    "empty": "Fluxul este gol. Adaugă prieteni sau scrie prima postare!",
+    "newPost": "Ce mai e nou?",
+    "publish": "Publică",
+    "addImage": "Foto",
+    "deletePost": "Ștergi această postare?",
+    "delete": "Șterge",
+    "cancel": "Anulează"
+  },
+  "post": {
+    "like": "Apreciez",
+    "comments": "Comentarii",
+    "commentPlaceholder": "Adaugă un comentariu…",
+    "send": "Trimite",
+    "noComments": "Niciun comentariu"
+  },
+  "friends": {
+    "title": "Prieteni",
+    "search": "Caută utilizatori",
+    "myFriends": "Prietenii mei",
+    "requests": "Cereri",
+    "incoming": "Primite",
+    "outgoing": "Trimise",
+    "accept": "Acceptă",
+    "decline": "Refuză",
+    "add": "Adaugă",
+    "remove": "Șterge",
+    "pending": "Cerere trimisă",
+    "noFriends": "Nu ai prieteni încă",
+    "noRequests": "Nicio cerere nouă"
+  },
+  "messages": {
+    "title": "Mesaje",
+    "empty": "Conversațiile vor apărea aici",
+    "placeholder": "Mesaj…",
+    "send": "Trimite",
+    "typing": "scrie…"
+  },
+  "profile": {
+    "edit": "Editează profil",
+    "save": "Salvează",
+    "bio": "Despre",
+    "displayName": "Nume",
+    "posts": "Postări",
+    "friends": "Prieteni",
+    "changeAvatar": "Schimbă avatarul"
+  },
+  "settings": {
+    "title": "Setări",
+    "language": "Limba",
+    "theme": "Temă",
+    "themeLight": "Luminoasă",
+    "themeDark": "Întunecată",
+    "themeSystem": "Sistem",
+    "notifications": "Notificări",
+    "notifMessages": "Mesaje",
+    "notifLikes": "Aprecieri",
+    "notifFriends": "Cereri de prietenie",
+    "about": "Despre aplicație",
+    "logout": "Ieșire din cont"
+  },
+  "common": {
+    "ok": "OK",
+    "save": "Salvează",
+    "cancel": "Anulează",
+    "delete": "Șterge",
+    "back": "Înapoi",
+    "loading": "Se încarcă…",
+    "error": "Ceva n-a mers",
+    "retry": "Reîncearcă"
+  }
+}

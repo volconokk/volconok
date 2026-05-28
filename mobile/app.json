@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "Volconok",
+    "slug": "volconok",
+    "version": "1.0.0",
+    "scheme": "volconok",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#F7F5F0"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.volconok.client",
+      "buildNumber": "1",
+      "deploymentTarget": "17.0",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "We need access to your photos so you can attach images to posts and messages.",
+        "NSCameraUsageDescription": "Used to take new photos for posts and messages."
+      }
+    },
+    "android": {
+      "package": "app.volconok.client",
+      "versionCode": 1,
+      "minSdkVersion": 21
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-localization",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Volconok to access your photos to attach them to posts and messages.",
+          "cameraPermission": "Allow Volconok to use your camera for posts and messages."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "apiUrl": "https://volconok-backend.onrender.com"
+    }
+  }
+}
