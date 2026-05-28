@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, Image, FlatList, Dimensions } from 'react-native';
+import { View, Text, Pressable, Image, FlatList, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import * as Haptics from 'expo-haptics';
 
@@ -9,10 +9,10 @@ import { useTheme } from '../theme/ThemeProvider';
 import { HeartIcon, CommentIcon } from './icons';
 import { timeAgo } from '../utils/time';
 
-export function PostCard({ post, onLike, onOpen, onOpenAuthor }) {
+function PostCardComponent({ post, onLike, onOpen, onOpenAuthor }) {
   const { colors, typography } = useTheme();
   const { i18n } = useTranslation();
-  const screenW = Dimensions.get('window').width;
+  const { width: screenW } = useWindowDimensions();
 
   return (
     <PencilFrame
@@ -110,3 +110,18 @@ export function PostCard({ post, onLike, onOpen, onOpenAuthor }) {
     </PencilFrame>
   );
 }
+
+// Memoized so the feed only re-renders cards whose data actually changed.
+export const PostCard = React.memo(PostCardComponent, (prev, next) => {
+  const a = prev.post;
+  const b = next.post;
+  return (
+    a.id === b.id &&
+    a.likesCount === b.likesCount &&
+    a.commentsCount === b.commentsCount &&
+    a.myReaction === b.myReaction &&
+    a.text === b.text &&
+    a.author?.avatarUrl === b.author?.avatarUrl &&
+    a.author?.displayName === b.author?.displayName
+  );
+});

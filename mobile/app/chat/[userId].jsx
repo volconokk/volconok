@@ -14,6 +14,7 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { api } from '../../src/api/client';
 import { ensureSocket, useSocketEvent } from '../../src/store/useSocket';
+import { useBadges } from '../../src/store/useBadges';
 import { SendIcon } from '../../src/components/icons';
 import { formatTime, formatDateSeparator, isSameDay, timeAgo } from '../../src/utils/time';
 
@@ -24,6 +25,7 @@ export default function ChatScreen() {
   const { colors, typography } = useTheme();
   const { t, i18n } = useTranslation();
   const { contentMaxWidth } = useResponsive();
+  const { refreshMessages } = useBadges();
   const [peer, setPeer] = useState(null);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -38,6 +40,8 @@ export default function ChatScreen() {
       ]);
       setMessages(m.data.messages);
       setPeer(u.data.user);
+      // Opening the chat marks incoming messages as read on the server.
+      refreshMessages();
       setTimeout(() => listRef.current?.scrollToEnd({ animated: false }), 50);
     } catch (err) {
       Alert.alert(t('common.error'), err.displayMessage);
@@ -176,18 +180,25 @@ export default function ChatScreen() {
             {item.text}
           </Text>
         </View>
-        <Text
+        <View
           style={{
-            ...typography.caption,
-            fontSize: 11,
-            color: colors.inkFaint,
+            flexDirection: 'row',
+            alignItems: 'center',
             alignSelf: item.outgoing ? 'flex-end' : 'flex-start',
             marginTop: 2,
             marginHorizontal: 4,
+            gap: 4,
           }}
         >
-          {formatTime(item.createdAt, i18n.language)}
-        </Text>
+          <Text style={{ ...typography.caption, fontSize: 11, color: colors.inkFaint }}>
+            {formatTime(item.createdAt, i18n.language)}
+          </Text>
+          {item.outgoing ? (
+            <Text style={{ fontSize: 11, color: item.readAt ? colors.success : colors.inkFaint }}>
+              {item.readAt ? '✓✓' : '✓'}
+            </Text>
+          ) : null}
+        </View>
       </View>
     </View>
   );

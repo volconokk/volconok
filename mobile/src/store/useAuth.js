@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api, getToken, setToken } from '../api/client';
+import { useBadges } from './useBadges';
 
 export const useAuth = create((set, get) => ({
   user: null,
@@ -62,6 +63,7 @@ export const useAuth = create((set, get) => ({
 
   async logout() {
     await setToken(null);
+    useBadges.getState().reset();
     set({ user: null, loading: false, error: null });
   },
 

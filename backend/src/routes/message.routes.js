@@ -74,6 +74,15 @@ router.get('/threads', authRequired, async (req, res, next) => {
   }
 });
 
+router.get('/unread-count', authRequired, async (req, res, next) => {
+  try {
+    const count = await Message.countDocuments({ to: req.userId, readAt: null });
+    res.json({ count });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/with/:userId', authRequired, async (req, res, next) => {
   try {
     const peerId = req.params.userId;

@@ -12,14 +12,18 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { api } from '../../src/api/client';
 import { useSocketEvent } from '../../src/store/useSocket';
+import { useBadges } from '../../src/store/useBadges';
 import { timeAgo } from '../../src/utils/time';
 import { ChatIcon } from '../../src/components/icons';
+
+const ONLINE_THRESHOLD_MS = 2 * 60 * 1000;
 
 export default function MessagesScreen() {
   const { colors, typography } = useTheme();
   const { t, i18n } = useTranslation();
   const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
+  const { refreshMessages } = useBadges();
   const [threads, setThreads] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -27,6 +31,7 @@ export default function MessagesScreen() {
     try {
       const { data } = await api.get('/messages/threads');
       setThreads(data.threads);
+      refreshMessages();
     } catch (err) {
       Alert.alert(t('common.error'), err.displayMessage);
     } finally {
@@ -50,7 +55,7 @@ export default function MessagesScreen() {
         <FlatList
           contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingVertical: 16, paddingBottom: 32 }}
           data={threads}
-          keyExtractor={(t) => t.peer?.id || Math.random().toString()}
+          keyExtractor={(item, index) => item.peer?.id || `thread-${index}`}
           style={{ alignSelf: 'center', width: '100%', maxWidth: contentMaxWidth }}
           refreshControl={
             <RefreshControl
@@ -93,7 +98,15 @@ export default function MessagesScreen() {
                   onPress={() => router.push(`/chat/${item.peer.id}`)}
                   style={{ flexDirection: 'row', alignItems: 'center' }}
                 >
-                  <Avatar uri={item.peer.avatarUrl} name={item.peer.displayName} size={46} />
+                  <Avatar
+                    uri={item.peer.avatarUrl}
+                    name={item.peer.displayName}
+                    size={46}
+                    online={
+                      item.peer.lastSeenAt &&
+                      Date.now() - new Date(item.peer.lastSeenAt).getTime() < ONLINE_THRESHOLD_MS
+                    }
+                  />
                   <View style={{ marginLeft: 12, flex: 1 }}>
                     <View
                       style={{

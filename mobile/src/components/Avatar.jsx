@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
 
-export function Avatar({ uri, name = '', size = 44, ring = true }) {
+export function Avatar({ uri, name = '', size = 44, ring = true, online }) {
   const { colors } = useTheme();
   const initials = (name || '?')
     .split(/\s+/)
@@ -12,27 +12,46 @@ export function Avatar({ uri, name = '', size = 44, ring = true }) {
     .join('')
     .toUpperCase();
 
+  const dotSize = Math.max(10, Math.round(size * 0.28));
+
   return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size / 2,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: colors.surface,
-        borderWidth: ring ? 1.5 : 0,
-        borderColor: colors.line,
-        overflow: 'hidden',
-      }}
-    >
-      {uri ? (
-        <Image source={{ uri }} style={{ width: size, height: size }} resizeMode="cover" />
-      ) : (
-        <Text style={{ fontSize: size * 0.36, fontWeight: '700', color: colors.ink }}>
-          {initials}
-        </Text>
-      )}
+    <View style={{ width: size, height: size }}>
+      <View
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: colors.surface,
+          borderWidth: ring ? 1.5 : 0,
+          borderColor: colors.line,
+          overflow: 'hidden',
+        }}
+      >
+        {uri ? (
+          <Image source={{ uri }} style={{ width: size, height: size }} resizeMode="cover" />
+        ) : (
+          <Text style={{ fontSize: size * 0.36, fontWeight: '700', color: colors.ink }}>
+            {initials}
+          </Text>
+        )}
+      </View>
+      {online ? (
+        <View
+          style={{
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+            width: dotSize,
+            height: dotSize,
+            borderRadius: dotSize / 2,
+            backgroundColor: colors.success,
+            borderWidth: 2,
+            borderColor: colors.paper,
+          }}
+        />
+      ) : null}
     </View>
   );
 }

@@ -12,6 +12,7 @@ import { useTheme } from '../src/theme/ThemeProvider';
 import { useResponsive } from '../src/hooks/useResponsive';
 import { api } from '../src/api/client';
 import { useSocketEvent } from '../src/store/useSocket';
+import { useBadges } from '../src/store/useBadges';
 import { timeAgo, isSameDay } from '../src/utils/time';
 import { HeartIcon, CommentIcon, FriendsIcon, ChatIcon, CheckIcon, BellIcon } from '../src/components/icons';
 
@@ -37,6 +38,7 @@ export default function NotificationsScreen() {
   const { t, i18n } = useTranslation();
   const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
+  const { clearNotifications } = useBadges();
   const [items, setItems] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -45,6 +47,7 @@ export default function NotificationsScreen() {
       const { data } = await api.get('/notifications');
       setItems(data.notifications);
       await api.post('/notifications/read-all').catch(() => {});
+      clearNotifications();
     } catch (err) {
       Alert.alert(t('common.error'), err.displayMessage);
     } finally {

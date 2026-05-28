@@ -13,6 +13,7 @@ import { api } from '../../src/api/client';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { useAuth } from '../../src/store/useAuth';
+import { useBadges } from '../../src/store/useBadges';
 import { BellIcon, TrashIcon } from '../../src/components/icons';
 import { useSocketEvent } from '../../src/store/useSocket';
 
@@ -22,6 +23,7 @@ export default function FeedScreen() {
   const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const { user } = useAuth();
+  const { notifications: notifBadge } = useBadges();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -64,25 +66,30 @@ export default function FeedScreen() {
     }
   };
 
-  const onLike = async (post) => {
-    const optimistic = posts.map((p) =>
-      p.id === post.id
-        ? {
-            ...p,
-            likesCount: p.myReaction ? p.likesCount - 1 : p.likesCount + 1,
-            myReaction: p.myReaction ? null : 'like',
-          }
-        : p,
-    );
-    setPosts(optimistic);
-    try {
-      const { data } = await api.post(`/posts/${post.id}/react`, { type: 'like' });
-      setPosts((all) => all.map((p) => (p.id === post.id ? { ...p, ...data.post } : p)));
-    } catch (err) {
-      Alert.alert(t('common.error'), err.displayMessage);
-      load();
-    }
-  };
+  const onLike = useCallback(
+    async (post) => {
+      setPosts((all) =>
+        all.map((p) =>
+          p.id === post.id
+            ? {
+                ...p,
+                likesCount: p.myReaction ? p.likesCount - 1 : p.likesCount + 1,
+                myReaction: p.myReaction ? null : 'like',
+              }
+            : p,
+        ),
+      );
+      try {
+        const { data } = await api.post(`/posts/${post.id}/react`, { type: 'like' });
+        setPosts((all) => all.map((p) => (p.id === post.id ? { ...p, ...data.post } : p)));
+      } catch (err) {
+        Alert.alert(t('common.error'), err.displayMessage);
+        load();
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [load],
+  );
 
   const onOpen = (post) => router.push(`/post/${post.id}`);
   const onOpenAuthor = (author) =>
@@ -117,6 +124,28 @@ export default function FeedScreen() {
               style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
             >
               <BellIcon color={colors.ink} />
+              {notifBadge > 0 ? (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -4,
+                    right: -4,
+                    minWidth: 16,
+                    height: 16,
+                    borderRadius: 8,
+                    paddingHorizontal: 4,
+                    backgroundColor: colors.accent,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderWidth: 1.5,
+                    borderColor: colors.paper,
+                  }}
+                >
+                  <Text style={{ color: colors.accentInk, fontSize: 9, fontWeight: '700' }}>
+                    {notifBadge > 9 ? '9+' : notifBadge}
+                  </Text>
+                </View>
+              ) : null}
             </Pressable>
           }
         />
@@ -171,6 +200,10 @@ export default function FeedScreen() {
           }
           onEndReached={loadMore}
           onEndReachedThreshold={0.4}
+          initialNumToRender={8}
+          maxToRenderPerBatch={8}
+          windowSize={11}
+          removeClippedSubviews
         />
       </SafeAreaView>
     </PaperBackground>

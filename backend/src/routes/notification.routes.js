@@ -32,6 +32,15 @@ router.get('/', authRequired, async (req, res, next) => {
   }
 });
 
+router.get('/unread-count', authRequired, async (req, res, next) => {
+  try {
+    const count = await Notification.countDocuments({ user: req.userId, read: false });
+    res.json({ count });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post('/read-all', authRequired, async (req, res, next) => {
   try {
     await Notification.updateMany({ user: req.userId, read: false }, { $set: { read: true } });
