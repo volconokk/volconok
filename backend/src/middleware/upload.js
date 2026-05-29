@@ -16,11 +16,24 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (_req, file, cb) => {
-  const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-  if (!allowed.includes(file.mimetype)) {
-    return cb(new Error('Unsupported file type'));
+  // Accept common image MIME types. Mobile clients sometimes send non-standard
+  // variants like 'image/jpg' or generic 'application/octet-stream' for images.
+  const allowed = [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/webp',
+    'image/gif',
+    'image/heic',
+    'image/heif',
+  ];
+  const ext = (file.originalname || '').split('.').pop()?.toLowerCase();
+  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif'];
+
+  if (allowed.includes(file.mimetype) || imageExtensions.includes(ext)) {
+    return cb(null, true);
   }
-  cb(null, true);
+  cb(new Error('Unsupported file type'));
 };
 
 const upload = multer({

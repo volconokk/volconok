@@ -62,14 +62,28 @@ api.interceptors.response.use(
   },
 );
 
+function getMimeType(filename, fallbackMime) {
+  const ext = (filename || '').split('.').pop()?.toLowerCase();
+  const mimeMap = {
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    gif: 'image/gif',
+    webp: 'image/webp',
+    heic: 'image/heic',
+    heif: 'image/heif',
+  };
+  return mimeMap[ext] || fallbackMime || 'image/jpeg';
+}
+
 export async function uploadImage(asset) {
   const form = new FormData();
   const filename = asset.fileName || asset.uri.split('/').pop() || 'image.jpg';
-  const match = /\.(\w+)$/.exec(filename);
-  const type = asset.mimeType || (match ? `image/${match[1]}` : 'image/jpeg');
+  const type = asset.mimeType || getMimeType(filename);
   form.append('file', { uri: asset.uri, name: filename, type });
   const { data } = await api.post('/upload/image', form, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 60000,
   });
   return data.url;
 }

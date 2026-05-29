@@ -1,56 +1,148 @@
-import React from 'react';
-import { View, ScrollView } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import {
+  View,
+  ScrollView,
+  Animated,
+  Keyboard,
+  Platform,
+  useWindowDimensions,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useKeyboardHeight } from '../hooks/useKeyboard';
 import { useTheme } from '../theme/ThemeProvider';
 
-// A reliable, JS-only replacement for KeyboardAvoidingView that works in
-// Expo Go on both iOS and Android (including Android edge-to-edge where the
-// window does not auto-resize). The `footer` (e.g. a message input bar) is
-// lifted to sit right above the keyboard, and the scrollable `children`
-// area shrinks to fill the remaining space.
+// A JS-only keyboard-aware container for chat-style screens.
+// The footer (e.g., a message composer) animates above the keyboard,
+// and the content area (FlatList/ScrollView) shrinks to fill the rest.
 export function KeyboardAvoidingScreen({ children, footer, onKeyboardChange }) {
   const insets = useSafeAreaInsets();
-  const kbHeight = useKeyboardHeight();
   const { colors } = useTheme();
+  const { height: windowHeight } = useWindowDimensions();
 
-  // When the keyboard is open the bottom safe-area inset is already covered
-  // by the keyboard, so subtract it to avoid an extra gap.
-  const lift = kbHeight > 0 ? Math.max(kbHeight - insets.bottom, 0) : 0;
+  const animatedPadding = useRef(new Animated.Value(0)).current;
+  const keyboardVisible = useRef(false);
 
-  React.useEffect(() => {
-    onKeyboardChange?.(kbHeight > 0);
-  }, [kbHeight, onKeyboardChange]);
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
-  // Keep the footer clear of the home indicator when the keyboard is hidden.
-  const footerPaddingBottom = kbHeight > 0 ? 0 : insets.bottom;
+    const onShow = (e) => {
+      const kbHeight = e?.endCoordinates?.height ?? 0;
+      const duration = Platform.OS === 'ios' ? (e?.duration ?? 250) : 150;
+      // Subtract bottom inset because the keyboard covers the safe area
+      const lift = Math.max(0, kbHeight - insets.bottom);
+
+      keyboardVisible.current = true;
+      onKeyboardChange?.(true);
+
+      Animated.timing(animatedPadding, {
+        toValue: lift,
+        duration,
+        useNativeDriver: false,
+      }).start();
+    };
+
+    const onHide = (e) => {
+      const duration = Platform.OS === 'ios' ? (e?.duration ?? 200) : 100;
+
+      keyboardVisible.current = false;
+      onKeyboardChange?.(false);
+
+      Animated.timing(animatedPadding, {
+        toValue: 0,
+        duration,
+        useNativeDriver: false,
+      }).start();
+    };
+
+    const showSub = Keyboard.addListener(showEvent, onShow);
+    const hideSub = Keyboard.addListener(hideEvent, onHide);
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [animatedPadding, insets.bottom, onKeyboardChange]);
+
+  // The bottom padding when keyboard is hidden (to clear home indicator/nav bar)
+  const staticBottomPadding = insets.bottom;
+
+  // Interpolate: when keyboard is open, reduce static padding to 0
+  const bottomPadding = animatedPadding.interpolate({
+    inputRange: [0, 1],
+    outputRange: [staticBottomPadding, 0],
+    extrapolate: 'clamp',
+  });
 
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>{children}</View>
-      <View style={{ marginBottom: lift, paddingBottom: footerPaddingBottom, backgroundColor: colors.paper }}>
+      <Animated.View
+        style={{
+          paddingBottom: bottomPadding,
+          marginBottom: animatedPadding,
+          backgroundColor: colors.paper,
+        }}
+      >
         {footer}
-      </View>
+      </Animated.View>
     </View>
   );
 }
 
-// A scroll container for forms that adds bottom padding equal to the keyboard
-// height, so the focused field can always be scrolled above the keyboard.
-export function KeyboardAwareForm({ children, contentContainerStyle, ...rest }) {
+// A scroll container for forms that adds bottom padding when keyboard is open,
+// allowing the user to scroll focused inputs into view.
+export function KeyboardAwareForm({ children, contentContainerStyle, scrollRef, ...rest }) {
   const insets = useSafeAreaInsets();
-  const kbHeight = useKeyboardHeight();
-  const extra = kbHeight > 0 ? Math.max(kbHeight - insets.bottom, 0) + 16 : 0;
+  const animatedPadding = useRef(new Animated.Value(0)).current;
+  const scrollViewRef = scrollRef || useRef(null);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const onShow = (e) => {
+      const kbHeight = e?.endCoordinates?.height ?? 0;
+      const duration = Platform.OS === 'ios' ? (e?.duration ?? 250) : 150;
+      const extra = Math.max(0, kbHeight - insets.bottom) + 20;
+
+      Animated.timing(animatedPadding, {
+        toValue: extra,
+        duration,
+        useNativeDriver: false,
+      }).start();
+    };
+
+    const onHide = (e) => {
+      const duration = Platform.OS === 'ios' ? (e?.duration ?? 200) : 100;
+
+      Animated.timing(animatedPadding, {
+        toValue: 0,
+        duration,
+        useNativeDriver: false,
+      }).start();
+    };
+
+    const showSub = Keyboard.addListener(showEvent, onShow);
+    const hideSub = Keyboard.addListener(hideEvent, onHide);
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [animatedPadding, insets.bottom]);
 
   return (
-    <ScrollView
+    <Animated.ScrollView
+      ref={scrollViewRef}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="interactive"
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={[contentContainerStyle, { paddingBottom: extra }]}
+      contentContainerStyle={contentContainerStyle}
+      style={{ flex: 1 }}
       {...rest}
     >
       {children}
-    </ScrollView>
+      <Animated.View style={{ height: animatedPadding }} />
+    </Animated.ScrollView>
   );
 }

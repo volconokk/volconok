@@ -23,7 +23,8 @@
     "android": {
       "package": "app.volconok.client",
       "versionCode": 1,
-      "minSdkVersion": 21
+      "minSdkVersion": 21,
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "bundler": "metro"
