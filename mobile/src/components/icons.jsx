@@ -683,3 +683,55 @@ export const MailIcon = ({ size = 24, color }) => {
     </Svg>
   );
 };
+
+// === CHAT ACTION ICONS ===
+
+export const ReplyIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Polyline points="9,17 4,12 9,7" />
+      <Path d="M20 18v-2a4 4 0 0 0-4-4H4" />
+    </Svg>
+  );
+};
+
+export const ChevronDownIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Polyline points="6,9 12,15 18,9" />
+    </Svg>
+  );
+};
+
+export const SmileIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="12" cy="12" r="9" />
+      <Path d="M8 14s1.5 2 4 2 4-2 4-2" />
+      <Circle cx="9" cy="9" r="0.6" fill={c} />
+      <Circle cx="15" cy="9" r="0.6" fill={c} />
+    </Svg>
+  );
+};
+
+export const DoubleCheckIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Polyline points="1,12 5,16 12,8" />
+      <Polyline points="9,16 13,16 20,8" />
+    </Svg>
+  );
+};
+
+export const CheckSingleIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Polyline points="4,12 9,17 20,6" />
+    </Svg>
+  );
+};

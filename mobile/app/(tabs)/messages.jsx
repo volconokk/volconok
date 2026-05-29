@@ -47,8 +47,33 @@ export default function MessagesScreen() {
     load();
   }, [load]);
 
-  useSocketEvent('message:new', () => {
-    load();
+  // Incremental update: patch the affected thread instead of reloading everything.
+  useSocketEvent('message:new', (msg) => {
+    const peerId = msg.outgoing ? msg.to : msg.from;
+    setThreads((prev) => {
+      const idx = prev.findIndex((th) => th.peer?.id === peerId);
+      if (idx === -1) {
+        // Unknown peer — fall back to a full reload to fetch their info.
+        load();
+        return prev;
+      }
+      const updated = {
+        ...prev[idx],
+        lastMessage: {
+          id: msg.id,
+          text: msg.text,
+          attachment: msg.attachment,
+          createdAt: msg.createdAt,
+          outgoing: msg.outgoing,
+          readAt: msg.readAt,
+        },
+        unread: msg.outgoing ? prev[idx].unread : (prev[idx].unread || 0) + 1,
+      };
+      // Move the updated thread to the top.
+      const rest = prev.filter((_, i) => i !== idx);
+      return [updated, ...rest];
+    });
+    refreshMessages();
   });
 
   return (
@@ -149,7 +174,9 @@ export default function MessagesScreen() {
                         numberOfLines={1}
                       >
                         {item.lastMessage.outgoing ? '› ' : ''}
-                        {item.lastMessage.text || (item.lastMessage.attachment ? '📷' : '')}
+                        {item.lastMessage.deleted
+                          ? t('messages.deletedMessage')
+                          : item.lastMessage.text || (item.lastMessage.attachment ? '📷' : '')}
                       </Text>
                       {item.unread ? (
                         <View

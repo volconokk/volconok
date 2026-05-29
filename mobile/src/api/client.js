@@ -9,7 +9,9 @@ const apiUrl =
 
 export const API_URL = apiUrl;
 
-console.log('[Volconok] API URL:', apiUrl);
+if (__DEV__) {
+  console.log('[Volconok] API URL:', apiUrl);
+}
 
 export const api = axios.create({
   baseURL: `${apiUrl}/api`,
@@ -57,7 +59,9 @@ api.interceptors.response.use(
   (err) => {
     const msg = err?.response?.data?.error || err.message || 'Network error';
     err.displayMessage = msg;
-    console.log('[API Error]', msg);
+    if (__DEV__) {
+      console.log('[API Error]', msg);
+    }
     return Promise.reject(err);
   },
 );

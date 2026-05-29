@@ -9,6 +9,17 @@ import { useTheme } from '../theme/ThemeProvider';
 import { HeartIcon, CommentIcon, BookmarkIcon, ShareIcon } from './icons';
 import { timeAgo } from '../utils/time';
 
+// Post reaction types — MUST match backend Post.REACTIONS enum.
+const POST_REACTIONS = [
+  { type: 'like', emoji: '👍' },
+  { type: 'love', emoji: '❤️' },
+  { type: 'haha', emoji: '😂' },
+  { type: 'wow', emoji: '😮' },
+  { type: 'sad', emoji: '😢' },
+  { type: 'pencil', emoji: '✏️' },
+];
+const REACTION_EMOJI = POST_REACTIONS.reduce((acc, r) => ({ ...acc, [r.type]: r.emoji }), {});
+
 // Double-tap detection hook
 function useDoubleTap(onDoubleTap, delay = 300) {
   const lastTap = useRef(0);
@@ -72,12 +83,13 @@ function HeartBurst({ visible, onComplete }) {
   );
 }
 
-function PostCardComponent({ post, onLike, onOpen, onOpenAuthor, onBookmark, onShare }) {
+function PostCardComponent({ post, onLike, onReact, onOpen, onOpenAuthor, onBookmark, onShare }) {
   const { colors, typography } = useTheme();
   const { t, i18n } = useTranslation();
   const { width: screenW } = useWindowDimensions();
   const [showHeartBurst, setShowHeartBurst] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked || false);
+  const [showReactions, setShowReactions] = useState(false);
 
   const handleDoubleTap = useCallback(() => {
     if (!post.myReaction) {
@@ -93,6 +105,21 @@ function PostCardComponent({ post, onLike, onOpen, onOpenAuthor, onBookmark, onS
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     onLike?.(post);
   }, [post, onLike]);
+
+  const handleLongPressLike = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    setShowReactions(true);
+  }, []);
+
+  const handleSelectReaction = useCallback(
+    (type) => {
+      Haptics.selectionAsync().catch(() => {});
+      setShowReactions(false);
+      if (onReact) onReact(post, type);
+      else onLike?.(post);
+    },
+    [post, onReact, onLike],
+  );
 
   const handleBookmark = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
@@ -184,6 +211,52 @@ function PostCardComponent({ post, onLike, onOpen, onOpenAuthor, onBookmark, onS
         ) : null}
       </Pressable>
 
+      {/* Reaction picker popover */}
+      {showReactions ? (
+        <>
+          <Pressable
+            onPress={() => setShowReactions(false)}
+            style={{ position: 'absolute', top: -1000, left: -1000, right: -1000, bottom: -1000 }}
+          />
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 52,
+              left: 8,
+              flexDirection: 'row',
+              backgroundColor: colors.paper,
+              borderRadius: 26,
+              borderWidth: 1,
+              borderColor: colors.lineSoft,
+              paddingHorizontal: 8,
+              paddingVertical: 6,
+              gap: 2,
+              shadowColor: colors.shadow,
+              shadowOpacity: 0.18,
+              shadowRadius: 10,
+              shadowOffset: { width: 0, height: 4 },
+              elevation: 6,
+              zIndex: 50,
+            }}
+          >
+            {POST_REACTIONS.map((r) => (
+              <Pressable
+                key={r.type}
+                onPress={() => handleSelectReaction(r.type)}
+                style={({ pressed }) => ({
+                  padding: 6,
+                  borderRadius: 18,
+                  backgroundColor: post.myReaction === r.type ? colors.surface : 'transparent',
+                  transform: [{ scale: pressed ? 1.3 : 1 }],
+                })}
+              >
+                <Text style={{ fontSize: 26 }}>{r.emoji}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </>
+      ) : null}
+
       {/* Actions bar */}
       <View
         style={{
@@ -195,9 +268,11 @@ function PostCardComponent({ post, onLike, onOpen, onOpenAuthor, onBookmark, onS
           borderTopColor: colors.lineSoft,
         }}
       >
-        {/* Like button */}
+        {/* Like / reaction button */}
         <Pressable
           onPress={handleLike}
+          onLongPress={handleLongPressLike}
+          delayLongPress={220}
           style={({ pressed }) => ({
             flexDirection: 'row',
             alignItems: 'center',
@@ -205,7 +280,11 @@ function PostCardComponent({ post, onLike, onOpen, onOpenAuthor, onBookmark, onS
             marginRight: 20,
           })}
         >
-          <HeartIcon size={22} color={post.myReaction ? colors.danger : colors.ink} filled={!!post.myReaction} />
+          {post.myReaction && post.myReaction !== 'like' ? (
+            <Text style={{ fontSize: 20 }}>{REACTION_EMOJI[post.myReaction]}</Text>
+          ) : (
+            <HeartIcon size={22} color={post.myReaction ? colors.danger : colors.ink} filled={!!post.myReaction} />
+          )}
           <Text
             style={{
               ...typography.body,
@@ -277,6 +356,7 @@ export const PostCard = React.memo(PostCardComponent, (prev, next) => {
     a.myReaction === b.myReaction &&
     a.isBookmarked === b.isBookmarked &&
     a.text === b.text &&
+    (a.images?.length || 0) === (b.images?.length || 0) &&
     a.author?.avatarUrl === b.author?.avatarUrl &&
     a.author?.displayName === b.author?.displayName
   );

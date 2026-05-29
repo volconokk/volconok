@@ -17,7 +17,7 @@ function handleValidation(req, res) {
 router.post(
   '/register',
   [
-    body('username').isString().trim().isLength({ min: 3, max: 20 }),
+    body('username').isString().trim().isLength({ min: 3, max: 32 }),
     body('email').isEmail(),
     body('password').isString().isLength({ min: 6, max: 128 }),
     body('displayName').optional().isString().isLength({ max: 64 }),

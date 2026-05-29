@@ -24,7 +24,7 @@ export default function FeedScreen() {
   const { contentMaxWidth, horizontalPadding } = useResponsive();
   const router = useRouter();
   const { user } = useAuth();
-  const { notifications: notifBadge } = useBadges();
+  const { notifications: notifBadge, refreshNotifications } = useBadges();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -49,7 +49,10 @@ export default function FeedScreen() {
     load();
   }, [load]);
 
-  useSocketEvent('notification:new', () => {});
+  // Refresh notification badge when something arrives while on the feed.
+  useSocketEvent('notification:new', () => {
+    refreshNotifications();
+  });
 
   const loadMore = async () => {
     if (!nextCursor || loadingMore) return;
@@ -82,6 +85,33 @@ export default function FeedScreen() {
       );
       try {
         const { data } = await api.post(`/posts/${post.id}/react`, { type: 'like' });
+        setPosts((all) => all.map((p) => (p.id === post.id ? { ...p, ...data.post } : p)));
+      } catch (err) {
+        Alert.alert(t('common.error'), err.displayMessage);
+        load();
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [load],
+  );
+
+  const onReact = useCallback(
+    async (post, type) => {
+      // Optimistic: toggle off if same reaction, otherwise set/replace.
+      setPosts((all) =>
+        all.map((p) => {
+          if (p.id !== post.id) return p;
+          const had = !!p.myReaction;
+          const same = p.myReaction === type;
+          return {
+            ...p,
+            myReaction: same ? null : type,
+            likesCount: same ? p.likesCount - 1 : had ? p.likesCount : p.likesCount + 1,
+          };
+        }),
+      );
+      try {
+        const { data } = await api.post(`/posts/${post.id}/react`, { type });
         setPosts((all) => all.map((p) => (p.id === post.id ? { ...p, ...data.post } : p)));
       } catch (err) {
         Alert.alert(t('common.error'), err.displayMessage);
@@ -174,6 +204,7 @@ export default function FeedScreen() {
               <PostCard
                 post={item}
                 onLike={onLike}
+                onReact={onReact}
                 onOpen={() => onOpen(item)}
                 onOpenAuthor={onOpenAuthor}
               />

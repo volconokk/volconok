@@ -88,7 +88,21 @@
     "yesterday": "Вчера",
     "online": "в сети",
     "delivered": "доставлено",
-    "read": "прочитано"
+    "read": "прочитано",
+    "reply": "Ответить",
+    "copy": "Копировать",
+    "edit": "Изменить",
+    "react": "Реакция",
+    "deleteMessage": "Удалить сообщение",
+    "deleteConfirm": "Удалить это сообщение?",
+    "edited": "изменено",
+    "deletedMessage": "Сообщение удалено",
+    "editing": "Редактирование",
+    "replyingTo": "Ответ для {{name}}",
+    "sending": "отправка…",
+    "failed": "не отправлено",
+    "tapToRetry": "Нажмите, чтобы повторить",
+    "scrollToBottom": "Вниз"
   },
   "profile": {
     "edit": "Редактировать профиль",

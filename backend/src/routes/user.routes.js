@@ -23,7 +23,9 @@ router.get('/search', authRequired, [query('q').isString().notEmpty()], async (r
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ error: 'Invalid query' });
-    const q = String(req.query.q).trim().toLowerCase();
+    const rawQ = String(req.query.q).trim().toLowerCase();
+    // Escape regex special chars to prevent ReDoS / injection.
+    const q = rawQ.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const users = await User.find({
       $or: [
         { username: { $regex: q, $options: 'i' } },

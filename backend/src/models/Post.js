@@ -22,6 +22,8 @@ const postSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+postSchema.index({ author: 1, _id: -1 });
+
 postSchema.virtual('likesCount').get(function likesCount() {
   return this.reactions.length;
 });

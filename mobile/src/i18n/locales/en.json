@@ -88,7 +88,21 @@
     "yesterday": "Yesterday",
     "online": "online",
     "delivered": "delivered",
-    "read": "read"
+    "read": "read",
+    "reply": "Reply",
+    "copy": "Copy",
+    "edit": "Edit",
+    "react": "React",
+    "deleteMessage": "Delete message",
+    "deleteConfirm": "Delete this message?",
+    "edited": "edited",
+    "deletedMessage": "Message deleted",
+    "editing": "Editing",
+    "replyingTo": "Reply to {{name}}",
+    "sending": "sending…",
+    "failed": "not sent",
+    "tapToRetry": "Tap to retry",
+    "scrollToBottom": "Bottom"
   },
   "profile": {
     "edit": "Edit profile",

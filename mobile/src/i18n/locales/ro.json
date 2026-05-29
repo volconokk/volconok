@@ -88,7 +88,21 @@
     "yesterday": "Ieri",
     "online": "online",
     "delivered": "livrat",
-    "read": "citit"
+    "read": "citit",
+    "reply": "Răspunde",
+    "copy": "Copiază",
+    "edit": "Editează",
+    "react": "Reacție",
+    "deleteMessage": "Șterge mesajul",
+    "deleteConfirm": "Ștergi acest mesaj?",
+    "edited": "editat",
+    "deletedMessage": "Mesaj șters",
+    "editing": "Editare",
+    "replyingTo": "Răspuns către {{name}}",
+    "sending": "se trimite…",
+    "failed": "netrimis",
+    "tapToRetry": "Apasă pentru reîncercare",
+    "scrollToBottom": "Jos"
   },
   "profile": {
     "edit": "Editează profil",
