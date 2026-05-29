@@ -11,6 +11,7 @@ import { Avatar } from '../../src/components/Avatar';
 import { PostCard } from '../../src/components/PostCard';
 import { Header } from '../../src/components/Header';
 import { ProfileStats } from '../../src/components/ProfileStats';
+import { FeedLoading } from '../../src/components/LoadingStates';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { api } from '../../src/api/client';
@@ -28,6 +29,7 @@ export default function UserScreen() {
   const [user, setUser] = useState(null);
   const [friendship, setFriendship] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     try {
@@ -38,6 +40,8 @@ export default function UserScreen() {
       setPosts(p.data.posts);
     } catch (err) {
       Alert.alert(t('common.error'), err.displayMessage);
+    } finally {
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [username]);
@@ -188,7 +192,9 @@ export default function UserScreen() {
             ) : null
           }
           ListEmptyComponent={
-            user ? (
+            loading ? (
+              <FeedLoading count={2} />
+            ) : user ? (
               <PencilFrame filled fillColor={colors.paper} radius={16} padding={20}>
                 <Text style={{ ...typography.body, color: colors.inkMuted, textAlign: 'center' }}>
                   {t('profile.noPosts')}
