@@ -86,6 +86,40 @@ router.get('/:idOrUsername', authRequired, async (req, res, next) => {
   }
 });
 
+router.get('/:idOrUsername/friends', authRequired, async (req, res, next) => {
+  try {
+    const { idOrUsername } = req.params;
+    const user = await (idOrUsername.match(/^[a-f0-9]{24}$/i)
+      ? User.findById(idOrUsername)
+      : User.findOne({ username: idOrUsername.toLowerCase() }));
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const friendships = await Friendship.find({
+      status: 'accepted',
+      $or: [{ requester: user._id }, { recipient: user._id }],
+    }).lean();
+
+    const friendIds = friendships.map((f) =>
+      f.requester.toString() === user._id.toString() ? f.recipient : f.requester
+    );
+
+    const friends = await User.find({ _id: { $in: friendIds } }).lean();
+
+    res.json({
+      friends: friends.map((u) => ({
+        id: u._id.toString(),
+        username: u.username,
+        displayName: u.displayName || u.username,
+        avatarUrl: u.avatarUrl,
+        bio: u.bio,
+        online: isUserOnline(u._id),
+      })),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.patch(
   '/me',
   authRequired,

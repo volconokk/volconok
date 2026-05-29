@@ -5,9 +5,20 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '../theme/ThemeProvider';
 import { BackIcon } from './icons';
 
-export function Header({ title, right, back, subtitle }) {
+export function Header({ title, right, back, subtitle, onBack }) {
   const { colors, typography } = useTheme();
   const router = useRouter();
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else if (router.canGoBack()) {
+      router.back();
+    } else {
+      // Fallback to tabs if no history
+      router.replace('/(tabs)/feed');
+    }
+  };
 
   return (
     <View
@@ -21,7 +32,7 @@ export function Header({ title, right, back, subtitle }) {
     >
       {back ? (
         <Pressable
-          onPress={() => router.back()}
+          onPress={handleBack}
           hitSlop={8}
           style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1, marginRight: 8 })}
         >

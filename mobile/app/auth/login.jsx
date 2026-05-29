@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ import { AnimatedLogo } from '../../src/components/Logo';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { useAuth } from '../../src/store/useAuth';
+import { AlertCircleIcon } from '../../src/components/icons';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -22,10 +23,12 @@ export default function LoginScreen() {
   const { login } = useAuth();
   const [form, setForm] = useState({ login: '', password: '' });
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
 
   const onSubmit = async () => {
+    setError(null);
     if (!form.login.trim() || !form.password) {
-      Alert.alert(t('common.error'), t('auth.fillFields'));
+      setError(t('auth.fillFields'));
       return;
     }
     setBusy(true);
@@ -35,9 +38,9 @@ export default function LoginScreen() {
     } catch (err) {
       const errorMessage = err.response?.data?.error || err.displayMessage || t('auth.error');
       if (errorMessage.includes('Invalid') || errorMessage.includes('not found')) {
-        Alert.alert(t('common.error'), t('auth.invalidCredentials'));
+        setError(t('auth.invalidCredentials'));
       } else {
-        Alert.alert(t('common.error'), errorMessage);
+        setError(errorMessage);
       }
     } finally {
       setBusy(false);
@@ -86,7 +89,10 @@ export default function LoginScreen() {
               <PencilInput
                 label={t('auth.loginOrEmail')}
                 value={form.login}
-                onChangeText={(login) => setForm({ ...form, login })}
+                onChangeText={(login) => {
+                  setForm({ ...form, login });
+                  setError(null);
+                }}
                 placeholder={t('auth.usernamePlaceholder')}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -96,11 +102,31 @@ export default function LoginScreen() {
               <PencilInput
                 label={t('auth.password')}
                 value={form.password}
-                onChangeText={(password) => setForm({ ...form, password })}
+                onChangeText={(password) => {
+                  setForm({ ...form, password });
+                  setError(null);
+                }}
                 placeholder={t('auth.passwordPlaceholder')}
                 secureTextEntry
-                style={{ marginBottom: 18 }}
+                style={{ marginBottom: 12 }}
               />
+              
+              {error && (
+                <View style={{ 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  backgroundColor: colors.dangerMuted,
+                  paddingVertical: 10,
+                  paddingHorizontal: 12,
+                  borderRadius: 10,
+                  marginBottom: 12,
+                }}>
+                  <AlertCircleIcon size={18} color={colors.danger} />
+                  <Text style={{ ...typography.body, color: colors.danger, marginLeft: 8, flex: 1 }}>
+                    {error}
+                  </Text>
+                </View>
+              )}
               
               <PencilButton
                 label={t('auth.signIn')}

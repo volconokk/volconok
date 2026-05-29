@@ -176,7 +176,11 @@ export default function UserScreen() {
                   ) : null}
                 </View>
 
-                <ProfileStats postsCount={user.postsCount} friendsCount={user.friendsCount} />
+                <ProfileStats 
+                  postsCount={user.postsCount} 
+                  friendsCount={user.friendsCount}
+                  onFriendsPress={() => router.push(`/friends/${user.id}`)}
+                />
 
                 <View style={{ flexDirection: 'row', marginTop: 14, gap: 8, justifyContent: 'center' }}>
                   {renderFriendButton()}

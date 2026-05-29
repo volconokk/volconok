@@ -35,6 +35,7 @@
     "invalidUsername": "Numele poate conține doar litere, cifre, _ și .",
     "shortUsername": "Numele trebuie să aibă 3-20 caractere",
     "userExists": "Utilizator cu acest nume sau email există deja",
+    "emailTaken": "Acest email este deja înregistrat",
     "invalidCredentials": "Nume sau parolă invalidă"
   },
   "tabs": {

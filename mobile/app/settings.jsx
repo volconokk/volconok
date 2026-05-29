@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Pressable, Switch, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { PaperBackground } from '../src/components/PaperBackground';
@@ -62,6 +63,7 @@ function Section({ title, children }) {
 export default function SettingsScreen() {
   const { colors, typography, setMode, mode } = useTheme();
   const { t, i18n } = useTranslation();
+  const router = useRouter();
   const { user, updateSettings, logout } = useAuth();
   const [busy, setBusy] = useState(false);
 
@@ -93,7 +95,11 @@ export default function SettingsScreen() {
   return (
     <PaperBackground>
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
-        <Header back title={t('settings.title')} />
+        <Header 
+          back 
+          title={t('settings.title')} 
+          onBack={() => router.back()}
+        />
         <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
           <Section title={t('settings.language')}>
             <Row

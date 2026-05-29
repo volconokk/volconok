@@ -28,8 +28,11 @@ export const light = {
   
   // Semantic
   danger: '#8B4049',       // darker, muted red (like aged ink)
+  dangerMuted: '#F5E8E9',  // very light danger background
   success: '#3D5A4A',      // muted green
+  successMuted: '#E8F0EB', // very light success background
   warning: '#8B7355',      // sepia tone
+  warningMuted: '#F5F0E8', // very light warning background
   
   // Chat bubbles
   bubbleMe: '#1A1A1A',
@@ -71,8 +74,11 @@ export const dark = {
   
   // Semantic
   danger: '#D4686A',
+  dangerMuted: '#2A1A1B',  // dark danger background
   success: '#6B9B7A',
+  successMuted: '#1A2A1E', // dark success background
   warning: '#C9A86C',
+  warningMuted: '#2A2518', // dark warning background
   
   // Chat bubbles
   bubbleMe: '#EDEBE6',

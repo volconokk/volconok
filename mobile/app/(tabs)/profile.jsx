@@ -159,7 +159,11 @@ export default function ProfileScreen() {
                 ) : null}
               </View>
 
-              <ProfileStats postsCount={stats.postsCount} friendsCount={stats.friendsCount} />
+              <ProfileStats 
+                postsCount={stats.postsCount} 
+                friendsCount={stats.friendsCount}
+                onFriendsPress={() => router.push('/profile/friends')}
+              />
 
               <View style={{ flexDirection: 'row', marginTop: 14, gap: 8 }}>
                 <PencilButton

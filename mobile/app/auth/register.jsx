@@ -13,6 +13,7 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { useAuth } from '../../src/store/useAuth';
 import { api } from '../../src/api/client';
+import { AlertCircleIcon, CheckCircleIcon } from '../../src/components/icons';
 
 export default function RegisterScreen() {
   const { t } = useTranslation();
@@ -105,10 +106,16 @@ export default function RegisterScreen() {
       });
     } catch (err) {
       const errorMessage = err.response?.data?.error || err.displayMessage || t('auth.error');
-      if (errorMessage.includes('username')) {
-        Alert.alert(t('common.error'), t('auth.userExists'));
-      } else if (errorMessage.includes('email')) {
-        Alert.alert(t('common.error'), t('auth.userExists'));
+      const errorLower = errorMessage.toLowerCase();
+      
+      if (errorLower.includes('username') && errorLower.includes('exist')) {
+        setValidationErrors(prev => ({ ...prev, username: t('auth.usernameTaken') }));
+      } else if (errorLower.includes('email') && errorLower.includes('exist')) {
+        setValidationErrors(prev => ({ ...prev, email: t('auth.emailTaken') }));
+      } else if (errorLower.includes('username')) {
+        setValidationErrors(prev => ({ ...prev, username: errorMessage }));
+      } else if (errorLower.includes('email')) {
+        setValidationErrors(prev => ({ ...prev, email: errorMessage }));
       } else {
         Alert.alert(t('common.error'), errorMessage);
       }
@@ -133,7 +140,7 @@ export default function RegisterScreen() {
     if (!form.username || form.username === '@') return null;
     if (usernameState.checking) {
       return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
           <ActivityIndicator size="small" color={colors.inkMuted} />
           <Text style={{ ...typography.caption, color: colors.inkMuted, marginLeft: 6 }}>
             {t('auth.usernameChecking')}
@@ -143,23 +150,32 @@ export default function RegisterScreen() {
     }
     if (usernameState.error) {
       return (
-        <Text style={{ ...typography.caption, color: colors.danger, marginTop: 4 }}>
-          {usernameState.error}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+          <AlertCircleIcon size={14} color={colors.danger} />
+          <Text style={{ ...typography.caption, color: colors.danger, marginLeft: 6 }}>
+            {usernameState.error}
+          </Text>
+        </View>
       );
     }
     if (usernameState.available === true) {
       return (
-        <Text style={{ ...typography.caption, color: colors.success, marginTop: 4 }}>
-          ✓ {t('auth.usernameAvailable')}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+          <CheckCircleIcon size={14} color={colors.success} />
+          <Text style={{ ...typography.caption, color: colors.success, marginLeft: 6 }}>
+            {t('auth.usernameAvailable')}
+          </Text>
+        </View>
       );
     }
     if (usernameState.available === false) {
       return (
-        <Text style={{ ...typography.caption, color: colors.danger, marginTop: 4 }}>
-          {t('auth.usernameTaken')}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+          <AlertCircleIcon size={14} color={colors.danger} />
+          <Text style={{ ...typography.caption, color: colors.danger, marginLeft: 6 }}>
+            {t('auth.usernameTaken')}
+          </Text>
+        </View>
       );
     }
     return null;
@@ -196,14 +212,20 @@ export default function RegisterScreen() {
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-              {getUsernameStatus()}
-              <Text style={{ ...typography.caption, color: colors.inkMuted, marginTop: 4 }}>
-                {t('auth.usernameHint')}
-              </Text>
-              {validationErrors.username && (
-                <Text style={{ ...typography.caption, color: colors.danger, marginTop: 4 }}>
-                  {validationErrors.username}
+              {/* Show username status only if no validation error */}
+              {!validationErrors.username && getUsernameStatus()}
+              {!validationErrors.username && !usernameState.error && (
+                <Text style={{ ...typography.caption, color: colors.inkMuted, marginTop: 4 }}>
+                  {t('auth.usernameHint')}
                 </Text>
+              )}
+              {validationErrors.username && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+                  <AlertCircleIcon size={14} color={colors.danger} />
+                  <Text style={{ ...typography.caption, color: colors.danger, marginLeft: 6 }}>
+                    {validationErrors.username}
+                  </Text>
+                </View>
               )}
             </View>
 
@@ -226,9 +248,12 @@ export default function RegisterScreen() {
                 placeholder={t('auth.emailPlaceholder')}
               />
               {validationErrors.email && (
-                <Text style={{ ...typography.caption, color: colors.danger, marginTop: 4 }}>
-                  {validationErrors.email}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+                  <AlertCircleIcon size={14} color={colors.danger} />
+                  <Text style={{ ...typography.caption, color: colors.danger, marginLeft: 6 }}>
+                    {validationErrors.email}
+                  </Text>
+                </View>
               )}
             </View>
 
@@ -241,9 +266,12 @@ export default function RegisterScreen() {
                 secureTextEntry
               />
               {validationErrors.password && (
-                <Text style={{ ...typography.caption, color: colors.danger, marginTop: 4 }}>
-                  {validationErrors.password}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+                  <AlertCircleIcon size={14} color={colors.danger} />
+                  <Text style={{ ...typography.caption, color: colors.danger, marginLeft: 6 }}>
+                    {validationErrors.password}
+                  </Text>
+                </View>
               )}
             </View>
 

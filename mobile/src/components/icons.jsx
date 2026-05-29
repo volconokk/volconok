@@ -549,3 +549,137 @@ export const RefreshIcon = ({ size = 24, color }) => {
     </Svg>
   );
 };
+
+// === ERROR & STATUS ICONS ===
+
+export const AlertCircleIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="12" cy="12" r="10" />
+      <Line x1="12" y1="8" x2="12" y2="12" />
+      <Circle cx="12" cy="16" r="0.5" fill={c} />
+    </Svg>
+  );
+};
+
+export const AlertTriangleIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M10.3 3.3 1.5 18.4c-.7 1.2.2 2.6 1.7 2.6h17.6c1.5 0 2.4-1.4 1.7-2.6L13.7 3.3c-.7-1.2-2.7-1.2-3.4 0z" />
+      <Line x1="12" y1="9" x2="12" y2="13" />
+      <Circle cx="12" cy="17" r="0.5" fill={c} />
+    </Svg>
+  );
+};
+
+export const CheckCircleIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="12" cy="12" r="10" />
+      <Polyline points="8,12 11,15 16,9" />
+    </Svg>
+  );
+};
+
+export const XCircleIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="12" cy="12" r="10" />
+      <Line x1="15" y1="9" x2="9" y2="15" />
+      <Line x1="9" y1="9" x2="15" y2="15" />
+    </Svg>
+  );
+};
+
+export const WifiOffIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M1 8.5a16 16 0 0 1 3.5-2.3" />
+      <Path d="M5 12.5a10 10 0 0 1 5-2.5" />
+      <Path d="M13 10a10 10 0 0 1 6 2.5" />
+      <Path d="M17.5 6.2A16 16 0 0 1 23 8.5" />
+      <Line x1="12" y1="20" x2="12" y2="20" />
+      <Circle cx="12" cy="20" r="1" fill={c} />
+      <Line x1="1" y1="1" x2="23" y2="23" />
+    </Svg>
+  );
+};
+
+export const ServerOffIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M4 6h16a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" opacity="0.5" />
+      <Path d="M4 14h16a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2z" />
+      <Circle cx="6" cy="17" r="1" fill={c} />
+      <Line x1="1" y1="1" x2="23" y2="23" />
+    </Svg>
+  );
+};
+
+export const LockIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z" />
+      <Path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </Svg>
+  );
+};
+
+export const UnlockIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z" />
+      <Path d="M7 11V7a5 5 0 0 1 9.9-1" />
+    </Svg>
+  );
+};
+
+export const ShieldIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </Svg>
+  );
+};
+
+export const ShieldAlertIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <Line x1="12" y1="8" x2="12" y2="12" />
+      <Circle cx="12" cy="16" r="0.5" fill={c} />
+    </Svg>
+  );
+};
+
+export const UserXIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="9" cy="7" r="4" />
+      <Path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 1.5.3" />
+      <Line x1="17" y1="14" x2="22" y2="19" />
+      <Line x1="22" y1="14" x2="17" y2="19" />
+    </Svg>
+  );
+};
+
+export const MailIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+      <Polyline points="22,6 12,13 2,6" />
+    </Svg>
+  );
+};

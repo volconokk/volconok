@@ -35,6 +35,7 @@
     "invalidUsername": "Username can only contain letters, numbers, _ and .",
     "shortUsername": "Username must be 3-20 characters long",
     "userExists": "User with this username or email already exists",
+    "emailTaken": "This email is already registered",
     "invalidCredentials": "Invalid username or password"
   },
   "tabs": {
