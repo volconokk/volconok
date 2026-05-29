@@ -12,6 +12,7 @@ import { Avatar } from '../../src/components/Avatar';
 import { PostCard } from '../../src/components/PostCard';
 import { Header } from '../../src/components/Header';
 import { ProfileStats } from '../../src/components/ProfileStats';
+import { FeedLoading } from '../../src/components/LoadingStates';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { useAuth } from '../../src/store/useAuth';
@@ -27,6 +28,7 @@ export default function ProfileScreen() {
   const { user, updateProfile } = useAuth();
   const [posts, setPosts] = useState([]);
   const [stats, setStats] = useState({ postsCount: 0, friendsCount: 0 });
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
@@ -41,6 +43,7 @@ export default function ProfileScreen() {
     } catch (_e) {
       // ignore
     } finally {
+      setLoading(false);
       setRefreshing(false);
     }
   }, [user]);
@@ -178,11 +181,15 @@ export default function ProfileScreen() {
             </PencilFrame>
           }
           ListEmptyComponent={
-            <PencilFrame filled fillColor={colors.paper} radius={16} padding={20}>
-              <Text style={{ ...typography.body, color: colors.inkMuted, textAlign: 'center' }}>
-                {t('profile.noPostsOwn')}
-              </Text>
-            </PencilFrame>
+            loading ? (
+              <FeedLoading count={2} />
+            ) : (
+              <PencilFrame filled fillColor={colors.paper} radius={16} padding={20}>
+                <Text style={{ ...typography.body, color: colors.inkMuted, textAlign: 'center' }}>
+                  {t('profile.noPostsOwn')}
+                </Text>
+              </PencilFrame>
+            )
           }
           renderItem={({ item }) => (
             <PostCard

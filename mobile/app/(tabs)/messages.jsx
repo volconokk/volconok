@@ -8,6 +8,7 @@ import { PaperBackground } from '../../src/components/PaperBackground';
 import { PencilFrame } from '../../src/components/PencilFrame';
 import { Avatar } from '../../src/components/Avatar';
 import { Header } from '../../src/components/Header';
+import { MessagesLoading } from '../../src/components/LoadingStates';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { api } from '../../src/api/client';
@@ -25,6 +26,7 @@ export default function MessagesScreen() {
   const router = useRouter();
   const { refreshMessages } = useBadges();
   const [threads, setThreads] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
@@ -35,6 +37,7 @@ export default function MessagesScreen() {
     } catch (err) {
       Alert.alert(t('common.error'), err.displayMessage);
     } finally {
+      setLoading(false);
       setRefreshing(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,21 +71,25 @@ export default function MessagesScreen() {
             />
           }
           ListEmptyComponent={
-            <View style={{ alignItems: 'center', marginTop: 60, paddingHorizontal: 32 }}>
-              <PencilFrame filled fillColor={colors.paper} radius={28} padding={20}>
-                <ChatIcon size={36} color={colors.inkMuted} />
-              </PencilFrame>
-              <Text
-                style={{ ...typography.subtitle, color: colors.ink, marginTop: 16, textAlign: 'center' }}
-              >
-                {t('messages.empty')}
-              </Text>
-              <Text
-                style={{ ...typography.body, color: colors.inkMuted, marginTop: 6, textAlign: 'center' }}
-              >
-                {t('messages.emptyHint')}
-              </Text>
-            </View>
+            loading ? (
+              <MessagesLoading count={5} />
+            ) : (
+              <View style={{ alignItems: 'center', marginTop: 60, paddingHorizontal: 32 }}>
+                <PencilFrame filled fillColor={colors.paper} radius={28} padding={20}>
+                  <ChatIcon size={36} color={colors.inkMuted} />
+                </PencilFrame>
+                <Text
+                  style={{ ...typography.subtitle, color: colors.ink, marginTop: 16, textAlign: 'center' }}
+                >
+                  {t('messages.empty')}
+                </Text>
+                <Text
+                  style={{ ...typography.body, color: colors.inkMuted, marginTop: 6, textAlign: 'center' }}
+                >
+                  {t('messages.emptyHint')}
+                </Text>
+              </View>
+            )
           }
           renderItem={({ item }) => {
             if (!item.peer) return null;

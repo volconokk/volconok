@@ -10,6 +10,7 @@ import { PencilInput } from '../../src/components/PencilInput';
 import { PencilButton } from '../../src/components/PencilButton';
 import { Avatar } from '../../src/components/Avatar';
 import { Header } from '../../src/components/Header';
+import { FriendsLoading } from '../../src/components/LoadingStates';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { api } from '../../src/api/client';
@@ -24,6 +25,7 @@ export default function FriendsScreen() {
   const [requests, setRequests] = useState({ incoming: [], outgoing: [] });
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
@@ -34,6 +36,7 @@ export default function FriendsScreen() {
     } catch (err) {
       Alert.alert(t('common.error'), err.displayMessage);
     } finally {
+      setLoading(false);
       setRefreshing(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -200,6 +203,7 @@ export default function FriendsScreen() {
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
           ListHeaderComponent={renderSearchHeader()}
+          ListEmptyComponent={loading ? <FriendsLoading count={4} /> : null}
           refreshControl={
             <RefreshControl
               tintColor={colors.ink}
@@ -222,7 +226,9 @@ export default function FriendsScreen() {
               >
                 {item.title}
               </Text>
-              {item.items.length === 0 && item.empty ? (
+              {loading && item.title === t('friends.myFriends') ? (
+                <FriendsLoading count={3} />
+              ) : item.items.length === 0 && item.empty ? (
                 <PencilFrame filled fillColor={colors.paper} radius={16} padding={16}>
                   <Text style={{ ...typography.body, color: colors.inkMuted, textAlign: 'center' }}>
                     {item.empty}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text } from 'react-native';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -9,6 +9,8 @@ import { ThemeProvider, useTheme } from '../src/theme/ThemeProvider';
 import { useAuth } from '../src/store/useAuth';
 import { ensureSocket, disconnectSocket } from '../src/store/useSocket';
 import { setLanguage } from '../src/i18n';
+import { ToastProvider } from '../src/components/Toast';
+import { PencilLoader } from '../src/components/SketchLoader';
 import '../src/i18n';
 
 function AuthGate({ children }) {
@@ -47,30 +49,29 @@ function AuthGate({ children }) {
     const atRoot = segments.length === 0;
 
     if (!user && !inAuth) {
-      // Unauthenticated users belong on the auth screens.
       router.replace('/auth/login');
     } else if (user && (inAuth || atRoot)) {
-      // Authenticated users leaving auth/root land on the feed. Any other
-      // in-app route (profile/edit, settings, chat, etc.) is left untouched.
       router.replace('/(tabs)/feed');
     }
   }, [user, loading, ready, segments]);
 
   if (!ready || loading) {
-    return (
-      <LoadingScreen />
-    );
+    return <LoadingScreen />;
   }
 
   return children;
 }
 
 function LoadingScreen() {
-  const { colors } = useTheme();
+  const { colors, typography } = useTheme();
+  
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg }}>
-      <ActivityIndicator size="large" color={colors.ink} />
-      <Text style={{ marginTop: 16, color: colors.inkMuted, fontSize: 14 }}>Загрузка...</Text>
+      <View style={{ marginBottom: 24 }}>
+        <PencilLoader size={80} />
+      </View>
+      <Text style={{ ...typography.title, color: colors.ink, marginBottom: 8 }}>Volconok</Text>
+      <Text style={{ ...typography.caption, color: colors.inkMuted }}>Загрузка...</Text>
     </View>
   );
 }
@@ -85,10 +86,12 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <StatusBarWrapper />
-          <AuthGate>
-            <Slot />
-          </AuthGate>
+          <ToastProvider>
+            <StatusBarWrapper />
+            <AuthGate>
+              <Slot />
+            </AuthGate>
+          </ToastProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

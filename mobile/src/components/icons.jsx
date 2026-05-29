@@ -235,3 +235,317 @@ export const PencilIcon = ({ size = 24, color }) => {
     </Svg>
   );
 };
+
+// === REACTION ICONS (sketch style) ===
+
+export const LoveIcon = ({ size = 24, color, filled }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)} fill={filled ? c : 'none'}>
+      <Path d="M12 21C12 21 3 13.5 3 8.5C3 5.5 5.5 3 8.5 3C10 3 11.5 4 12 5C12.5 4 14 3 15.5 3C18.5 3 21 5.5 21 8.5C21 13.5 12 21 12 21Z" />
+      <Circle cx="8" cy="8" r="1" fill={c} />
+      <Circle cx="16" cy="8" r="1" fill={c} />
+    </Svg>
+  );
+};
+
+export const LaughIcon = ({ size = 24, color, filled }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)} fill={filled ? c : 'none'}>
+      <Circle cx="12" cy="12" r="9" />
+      <Path d="M8 9 Q8.5 8 9 9" />
+      <Path d="M15 9 Q15.5 8 16 9" />
+      <Path d="M7 14 Q12 19 17 14" />
+    </Svg>
+  );
+};
+
+export const WowIcon = ({ size = 24, color, filled }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)} fill={filled ? c : 'none'}>
+      <Circle cx="12" cy="12" r="9" />
+      <Circle cx="8.5" cy="10" r="1.5" />
+      <Circle cx="15.5" cy="10" r="1.5" />
+      <Circle cx="12" cy="16" r="2.5" />
+    </Svg>
+  );
+};
+
+export const SadIcon = ({ size = 24, color, filled }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)} fill={filled ? c : 'none'}>
+      <Circle cx="12" cy="12" r="9" />
+      <Circle cx="8.5" cy="10" r="1" fill={c} />
+      <Circle cx="15.5" cy="10" r="1" fill={c} />
+      <Path d="M8 17 Q12 14 16 17" />
+      <Path d="M7 7 L10 9" />
+      <Path d="M17 7 L14 9" />
+    </Svg>
+  );
+};
+
+export const AngryIcon = ({ size = 24, color, filled }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)} fill={filled ? c : 'none'}>
+      <Circle cx="12" cy="12" r="9" />
+      <Circle cx="8.5" cy="11" r="1" fill={c} />
+      <Circle cx="15.5" cy="11" r="1" fill={c} />
+      <Path d="M8 16 Q12 14 16 16" />
+      <Path d="M6 8 L10 10" />
+      <Path d="M18 8 L14 10" />
+    </Svg>
+  );
+};
+
+// === FEATURE ICONS ===
+
+export const BookmarkIcon = ({ size = 24, color, filled }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)} fill={filled ? c : 'none'}>
+      <Path d="M5 4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v18l-7-4-7 4V4z" />
+    </Svg>
+  );
+};
+
+export const ShareIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="6" cy="12" r="2.5" />
+      <Circle cx="18" cy="6" r="2.5" />
+      <Circle cx="18" cy="18" r="2.5" />
+      <Line x1="8.5" y1="11" x2="15.5" y2="7" />
+      <Line x1="8.5" y1="13" x2="15.5" y2="17" />
+    </Svg>
+  );
+};
+
+export const CameraIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M4 7h3l2-2h6l2 2h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z" />
+      <Circle cx="12" cy="13" r="4" />
+    </Svg>
+  );
+};
+
+export const MicIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+      <Path d="M19 10v1a7 7 0 0 1-14 0v-1" />
+      <Line x1="12" y1="18" x2="12" y2="22" />
+      <Line x1="8" y1="22" x2="16" y2="22" />
+    </Svg>
+  );
+};
+
+export const StickerIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="12" cy="12" r="9" />
+      <Path d="M8 14s1.5 2 4 2 4-2 4-2" />
+      <Circle cx="9" cy="10" r="1" fill={c} />
+      <Circle cx="15" cy="10" r="1" fill={c} />
+    </Svg>
+  );
+};
+
+export const GifIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+      <Path d="M8 10h2v4H8v-2h1" />
+      <Line x1="12" y1="10" x2="12" y2="14" />
+      <Path d="M15 10h3M15 12h2M15 14h1" />
+    </Svg>
+  );
+};
+
+export const LocationIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z" />
+      <Circle cx="12" cy="9" r="2.5" />
+    </Svg>
+  );
+};
+
+export const SparkleIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" />
+      <Path d="M5 5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" />
+      <Path d="M18 14l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" />
+    </Svg>
+  );
+};
+
+export const FireIcon = ({ size = 24, color, filled }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)} fill={filled ? c : 'none'}>
+      <Path d="M12 22c4-2 7-6 7-11C19 6 14 2 12 2c0 4-2 6-4 8-2.5 2.5-2 5-2 6 0 4 3 6 6 6z" />
+      <Path d="M12 22c-2-1-3-3-3-5 0-2 1-3 3-5 2 2 3 3 3 5 0 2-1 4-3 5z" />
+    </Svg>
+  );
+};
+
+export const CrownIcon = ({ size = 24, color, filled }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)} fill={filled ? c : 'none'}>
+      <Path d="M2 17l3-9 5 4 2-8 2 8 5-4 3 9z" />
+      <Line x1="2" y1="17" x2="22" y2="17" />
+      <Line x1="4" y1="20" x2="20" y2="20" />
+    </Svg>
+  );
+};
+
+export const StarIcon = ({ size = 24, color, filled }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)} fill={filled ? c : 'none'}>
+      <Path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" />
+    </Svg>
+  );
+};
+
+export const EyeIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <Circle cx="12" cy="12" r="3" />
+    </Svg>
+  );
+};
+
+export const EyeOffIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M17.9 17.4C16.2 18.4 14.2 19 12 19c-7 0-11-8-11-8a21 21 0 0 1 5.1-5.4" />
+      <Path d="M14.1 9.9a3 3 0 0 1-4.2 4.2" />
+      <Line x1="1" y1="1" x2="23" y2="23" />
+      <Path d="M9.9 4.2A9 9 0 0 1 12 4c7 0 11 8 11 8a21 21 0 0 1-2.2 3.1" />
+    </Svg>
+  );
+};
+
+export const ClockIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="12" cy="12" r="9" />
+      <Polyline points="12,6 12,12 16,14" />
+    </Svg>
+  );
+};
+
+export const CalendarIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z" />
+      <Line x1="16" y1="2" x2="16" y2="6" />
+      <Line x1="8" y1="2" x2="8" y2="6" />
+      <Line x1="4" y1="10" x2="20" y2="10" />
+    </Svg>
+  );
+};
+
+export const LinkIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5" />
+      <Path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5" />
+    </Svg>
+  );
+};
+
+export const CopyIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+      <Path d="M8 4v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-4H10a2 2 0 0 0-2 2z" />
+    </Svg>
+  );
+};
+
+export const InfoIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="12" cy="12" r="9" />
+      <Line x1="12" y1="16" x2="12" y2="12" />
+      <Circle cx="12" cy="8" r="0.5" fill={c} />
+    </Svg>
+  );
+};
+
+export const QuoteIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M3 21c3 0 7-1 7-8V5c0-1.3-.8-2-2-2H5a2 2 0 0 0-2 2v6c0 1.3.8 2 2 2h3c0 3-2 5.5-5 6z" />
+      <Path d="M14 21c3 0 7-1 7-8V5c0-1.3-.8-2-2-2h-3a2 2 0 0 0-2 2v6c0 1.3.8 2 2 2h3c0 3-2 5.5-5 6z" />
+    </Svg>
+  );
+};
+
+export const HashIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Line x1="4" y1="9" x2="20" y2="9" />
+      <Line x1="4" y1="15" x2="20" y2="15" />
+      <Line x1="10" y1="3" x2="8" y2="21" />
+      <Line x1="16" y1="3" x2="14" y2="21" />
+    </Svg>
+  );
+};
+
+export const AtIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Circle cx="12" cy="12" r="4" />
+      <Path d="M16 12v1.5a2.5 2.5 0 0 0 5 0V12a9 9 0 1 0-5.5 8.3" />
+    </Svg>
+  );
+};
+
+export const EditIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <Path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </Svg>
+  );
+};
+
+export const RefreshIcon = ({ size = 24, color }) => {
+  const c = useIconColor(color);
+  return (
+    <Svg {...base(size, c)}>
+      <Path d="M1 4v6h6" />
+      <Path d="M23 20v-6h-6" />
+      <Path d="M20.5 9A9 9 0 0 0 5.6 5.6L1 10M23 14l-4.6 4.4A9 9 0 0 1 3.5 15" />
+    </Svg>
+  );
+};

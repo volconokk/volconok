@@ -141,6 +141,40 @@
     "error": "Something went wrong",
     "retry": "Retry",
     "today": "Today",
-    "yesterday": "Yesterday"
+    "yesterday": "Yesterday",
+    "share": "Share",
+    "bookmark": "Save",
+    "bookmarked": "Saved",
+    "copied": "Copied!",
+    "doubleTapHint": "Double-tap to like"
+  },
+  "empty": {
+    "feedTitle": "No posts yet",
+    "feedMessage": "Be the first to share something interesting!",
+    "messagesTitle": "No messages",
+    "messagesMessage": "Start chatting with your friends",
+    "friendsTitle": "No friends yet",
+    "friendsMessage": "Find interesting people to connect with",
+    "notificationsTitle": "All caught up!",
+    "notificationsMessage": "No new notifications",
+    "searchTitle": "Nothing found",
+    "searchMessage": "Try a different search",
+    "bookmarksTitle": "No saved posts",
+    "bookmarksMessage": "Save interesting posts to find them later"
+  },
+  "reactions": {
+    "like": "Like",
+    "love": "Love",
+    "laugh": "Haha",
+    "wow": "Wow",
+    "sad": "Sad",
+    "fire": "Fire!"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "weeksAgo": "{{count}}w ago"
   }
 }

@@ -9,6 +9,7 @@ import { PencilFrame } from '../../src/components/PencilFrame';
 import { Header } from '../../src/components/Header';
 import { Composer } from '../../src/components/Composer';
 import { PostCard } from '../../src/components/PostCard';
+import { FeedLoading } from '../../src/components/LoadingStates';
 import { api } from '../../src/api/client';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { useResponsive } from '../../src/hooks/useResponsive';
@@ -158,13 +159,15 @@ export default function FeedScreen() {
           keyboardDismissMode="interactive"
           ListHeaderComponent={<Composer onPosted={(p) => setPosts((all) => [p, ...all])} />}
           ListEmptyComponent={
-            !loading ? (
+            loading ? (
+              <FeedLoading count={3} />
+            ) : (
               <PencilFrame filled fillColor={colors.paper} radius={20} padding={20}>
                 <Text style={{ ...typography.body, color: colors.inkMuted, textAlign: 'center' }}>
                   {t('feed.empty')}
                 </Text>
               </PencilFrame>
-            ) : null
+            )
           }
           renderItem={({ item }) => (
             <View>

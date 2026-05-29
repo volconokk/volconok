@@ -8,6 +8,7 @@ import { PaperBackground } from '../src/components/PaperBackground';
 import { PencilFrame } from '../src/components/PencilFrame';
 import { Avatar } from '../src/components/Avatar';
 import { Header } from '../src/components/Header';
+import { NotificationsLoading } from '../src/components/LoadingStates';
 import { useTheme } from '../src/theme/ThemeProvider';
 import { useResponsive } from '../src/hooks/useResponsive';
 import { api } from '../src/api/client';
@@ -40,6 +41,7 @@ export default function NotificationsScreen() {
   const router = useRouter();
   const { clearNotifications } = useBadges();
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
@@ -51,6 +53,7 @@ export default function NotificationsScreen() {
     } catch (err) {
       Alert.alert(t('common.error'), err.displayMessage);
     } finally {
+      setLoading(false);
       setRefreshing(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,16 +165,20 @@ export default function NotificationsScreen() {
             />
           }
           ListEmptyComponent={
-            <View style={{ alignItems: 'center', marginTop: 60, paddingHorizontal: 32 }}>
-              <PencilFrame filled fillColor={colors.paper} radius={28} padding={20}>
-                <BellIcon size={36} color={colors.inkMuted} />
-              </PencilFrame>
-              <Text
-                style={{ ...typography.body, color: colors.inkMuted, marginTop: 16, textAlign: 'center' }}
-              >
-                {t('notif.empty')}
-              </Text>
-            </View>
+            loading ? (
+              <NotificationsLoading count={5} />
+            ) : (
+              <View style={{ alignItems: 'center', marginTop: 60, paddingHorizontal: 32 }}>
+                <PencilFrame filled fillColor={colors.paper} radius={28} padding={20}>
+                  <BellIcon size={36} color={colors.inkMuted} />
+                </PencilFrame>
+                <Text
+                  style={{ ...typography.body, color: colors.inkMuted, marginTop: 16, textAlign: 'center' }}
+                >
+                  {t('notif.empty')}
+                </Text>
+              </View>
+            )
           }
           renderItem={renderItem}
         />

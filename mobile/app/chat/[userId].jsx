@@ -30,6 +30,7 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [typing, setTyping] = useState(false);
+  const [loading, setLoading] = useState(true);
   const listRef = useRef(null);
 
   const load = useCallback(async () => {
@@ -40,11 +41,12 @@ export default function ChatScreen() {
       ]);
       setMessages(m.data.messages);
       setPeer(u.data.user);
-      // Opening the chat marks incoming messages as read on the server.
       refreshMessages();
       setTimeout(() => listRef.current?.scrollToEnd({ animated: false }), 50);
     } catch (err) {
       Alert.alert(t('common.error'), err.displayMessage);
+    } finally {
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
@@ -265,11 +267,13 @@ export default function ChatScreen() {
             keyboardDismissMode="interactive"
             onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
             ListEmptyComponent={
-              <View style={{ alignItems: 'center', marginTop: 40 }}>
-                <Text style={{ ...typography.body, color: colors.inkMuted }}>
-                  {t('messages.startConversation')}
-                </Text>
-              </View>
+              loading ? null : (
+                <View style={{ alignItems: 'center', marginTop: 40 }}>
+                  <Text style={{ ...typography.body, color: colors.inkMuted }}>
+                    {t('messages.startConversation')}
+                  </Text>
+                </View>
+              )
             }
             renderItem={renderItem}
           />

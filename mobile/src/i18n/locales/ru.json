@@ -141,6 +141,40 @@
     "error": "Что-то пошло не так",
     "retry": "Повторить",
     "today": "Сегодня",
-    "yesterday": "Вчера"
+    "yesterday": "Вчера",
+    "share": "Поделиться",
+    "bookmark": "Сохранить",
+    "bookmarked": "Сохранено",
+    "copied": "Скопировано!",
+    "doubleTapHint": "Дважды нажмите, чтобы лайкнуть"
+  },
+  "empty": {
+    "feedTitle": "Лента пуста",
+    "feedMessage": "Будьте первым, кто поделится чем-нибудь интересным!",
+    "messagesTitle": "Нет сообщений",
+    "messagesMessage": "Начните общение с друзьями",
+    "friendsTitle": "Друзей пока нет",
+    "friendsMessage": "Найдите интересных людей",
+    "notificationsTitle": "Всё прочитано!",
+    "notificationsMessage": "Новых уведомлений нет",
+    "searchTitle": "Ничего не найдено",
+    "searchMessage": "Попробуйте другой запрос",
+    "bookmarksTitle": "Нет сохранённых постов",
+    "bookmarksMessage": "Сохраняйте интересные посты, чтобы вернуться к ним позже"
+  },
+  "reactions": {
+    "like": "Нравится",
+    "love": "Люблю",
+    "laugh": "Смешно",
+    "wow": "Удивлён",
+    "sad": "Грустно",
+    "fire": "Огонь!"
+  },
+  "time": {
+    "justNow": "только что",
+    "minutesAgo": "{{count}} мин. назад",
+    "hoursAgo": "{{count}} ч. назад",
+    "daysAgo": "{{count}} дн. назад",
+    "weeksAgo": "{{count}} нед. назад"
   }
 }
