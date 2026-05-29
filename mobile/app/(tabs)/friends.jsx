@@ -197,6 +197,8 @@ export default function FriendsScreen() {
           data={sections}
           keyExtractor={(s) => s.title}
           style={{ alignSelf: 'center', width: '100%', maxWidth: contentMaxWidth }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
           ListHeaderComponent={renderSearchHeader()}
           refreshControl={
             <RefreshControl

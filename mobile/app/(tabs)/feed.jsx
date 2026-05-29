@@ -154,6 +154,8 @@ export default function FeedScreen() {
           data={posts}
           keyExtractor={(p) => p.id}
           style={{ alignSelf: 'center', width: '100%', maxWidth: contentMaxWidth }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
           ListHeaderComponent={<Composer onPosted={(p) => setPosts((all) => [p, ...all])} />}
           ListEmptyComponent={
             !loading ? (

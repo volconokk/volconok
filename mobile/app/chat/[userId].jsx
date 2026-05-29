@@ -258,9 +258,11 @@ export default function ChatScreen() {
         >
           <FlatList
             ref={listRef}
-            contentContainerStyle={{ padding: 16, paddingBottom: 12 }}
+            contentContainerStyle={{ padding: 16, paddingBottom: 12, flexGrow: 1 }}
             data={decorated}
             keyExtractor={(m) => m.id}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
             onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
             ListEmptyComponent={
               <View style={{ alignItems: 'center', marginTop: 40 }}>

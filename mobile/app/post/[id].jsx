@@ -117,9 +117,11 @@ export default function PostScreen() {
         >
           <FlatList
             ref={listRef}
-            contentContainerStyle={{ padding: 16, paddingBottom: 24 }}
+            contentContainerStyle={{ padding: 16, paddingBottom: 24, flexGrow: 1 }}
             data={comments}
             keyExtractor={(c) => c.id}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
             ListHeaderComponent={
               post ? (
                 <PostCard

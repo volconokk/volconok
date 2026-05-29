@@ -1,87 +1,85 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
-  ScrollView,
-  Animated,
   Keyboard,
   Platform,
-  useWindowDimensions,
+  ScrollView,
+  Animated,
+  StyleSheet,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeProvider';
 
-// A JS-only keyboard-aware container for chat-style screens.
-// The footer (e.g., a message composer) animates above the keyboard,
-// and the content area (FlatList/ScrollView) shrinks to fill the rest.
+// Keyboard-aware container for chat-style screens.
+// Properly handles keyboard in Expo SDK 54+ on both iOS and Android,
+// including Android's edge-to-edge mode where keyboard overlaps content.
 export function KeyboardAvoidingScreen({ children, footer, onKeyboardChange }) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
-  const { height: windowHeight } = useWindowDimensions();
-
-  const animatedPadding = useRef(new Animated.Value(0)).current;
-  const keyboardVisible = useRef(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const animatedMargin = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
-    const onShow = (e) => {
+    const handleShow = (e) => {
       const kbHeight = e?.endCoordinates?.height ?? 0;
-      const duration = Platform.OS === 'ios' ? (e?.duration ?? 250) : 150;
-      // Subtract bottom inset because the keyboard covers the safe area
-      const lift = Math.max(0, kbHeight - insets.bottom);
-
-      keyboardVisible.current = true;
+      setKeyboardHeight(kbHeight);
       onKeyboardChange?.(true);
 
-      Animated.timing(animatedPadding, {
+      // Calculate lift: keyboard height minus bottom inset (already accounted for)
+      const lift = Math.max(0, kbHeight - insets.bottom);
+      const duration = Platform.OS === 'ios' ? (e?.duration ?? 250) : 200;
+
+      Animated.timing(animatedMargin, {
         toValue: lift,
         duration,
         useNativeDriver: false,
       }).start();
     };
 
-    const onHide = (e) => {
-      const duration = Platform.OS === 'ios' ? (e?.duration ?? 200) : 100;
-
-      keyboardVisible.current = false;
+    const handleHide = (e) => {
+      setKeyboardHeight(0);
       onKeyboardChange?.(false);
 
-      Animated.timing(animatedPadding, {
+      const duration = Platform.OS === 'ios' ? (e?.duration ?? 200) : 150;
+
+      Animated.timing(animatedMargin, {
         toValue: 0,
         duration,
         useNativeDriver: false,
       }).start();
     };
 
-    const showSub = Keyboard.addListener(showEvent, onShow);
-    const hideSub = Keyboard.addListener(hideEvent, onHide);
+    const showSub = Keyboard.addListener(showEvent, handleShow);
+    const hideSub = Keyboard.addListener(hideEvent, handleHide);
 
     return () => {
       showSub.remove();
       hideSub.remove();
     };
-  }, [animatedPadding, insets.bottom, onKeyboardChange]);
+  }, [animatedMargin, insets.bottom, onKeyboardChange]);
 
-  // The bottom padding when keyboard is hidden (to clear home indicator/nav bar)
-  const staticBottomPadding = insets.bottom;
-
-  // Interpolate: when keyboard is open, reduce static padding to 0
-  const bottomPadding = animatedPadding.interpolate({
-    inputRange: [0, 1],
-    outputRange: [staticBottomPadding, 0],
-    extrapolate: 'clamp',
-  });
+  // Bottom safe area padding only when keyboard is hidden
+  const isKeyboardVisible = keyboardHeight > 0;
+  const bottomPadding = isKeyboardVisible ? 0 : insets.bottom;
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>{children}</View>
+    <View style={styles.container}>
+      {/* Content area - flex: 1 to fill available space */}
+      <View style={styles.content}>{children}</View>
+
+      {/* Footer - animated to sit above keyboard */}
       <Animated.View
-        style={{
-          paddingBottom: bottomPadding,
-          marginBottom: animatedPadding,
-          backgroundColor: colors.paper,
-        }}
+        style={[
+          styles.footer,
+          {
+            paddingBottom: bottomPadding,
+            marginBottom: animatedMargin,
+            backgroundColor: colors.paper,
+          },
+        ]}
       >
         {footer}
       </Animated.View>
@@ -89,60 +87,59 @@ export function KeyboardAvoidingScreen({ children, footer, onKeyboardChange }) {
   );
 }
 
-// A scroll container for forms that adds bottom padding when keyboard is open,
-// allowing the user to scroll focused inputs into view.
-export function KeyboardAwareForm({ children, contentContainerStyle, scrollRef, ...rest }) {
+// Scroll container for forms with keyboard handling.
+export function KeyboardAwareForm({ children, contentContainerStyle, ...rest }) {
   const insets = useSafeAreaInsets();
-  const animatedPadding = useRef(new Animated.Value(0)).current;
-  const scrollViewRef = scrollRef || useRef(null);
+  const [keyboardPadding, setKeyboardPadding] = useState(0);
 
   useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
-    const onShow = (e) => {
+    const handleShow = (e) => {
       const kbHeight = e?.endCoordinates?.height ?? 0;
-      const duration = Platform.OS === 'ios' ? (e?.duration ?? 250) : 150;
-      const extra = Math.max(0, kbHeight - insets.bottom) + 20;
-
-      Animated.timing(animatedPadding, {
-        toValue: extra,
-        duration,
-        useNativeDriver: false,
-      }).start();
+      // Add extra padding so inputs can scroll above keyboard
+      const extra = kbHeight > 0 ? kbHeight + 24 : 280;
+      setKeyboardPadding(extra);
     };
 
-    const onHide = (e) => {
-      const duration = Platform.OS === 'ios' ? (e?.duration ?? 200) : 100;
-
-      Animated.timing(animatedPadding, {
-        toValue: 0,
-        duration,
-        useNativeDriver: false,
-      }).start();
+    const handleHide = () => {
+      setKeyboardPadding(0);
     };
 
-    const showSub = Keyboard.addListener(showEvent, onShow);
-    const hideSub = Keyboard.addListener(hideEvent, onHide);
+    const showSub = Keyboard.addListener(showEvent, handleShow);
+    const hideSub = Keyboard.addListener(hideEvent, handleHide);
 
     return () => {
       showSub.remove();
       hideSub.remove();
     };
-  }, [animatedPadding, insets.bottom]);
+  }, []);
 
   return (
-    <Animated.ScrollView
-      ref={scrollViewRef}
+    <ScrollView
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="interactive"
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={contentContainerStyle}
-      style={{ flex: 1 }}
+      contentContainerStyle={[
+        { flexGrow: 1, paddingBottom: Math.max(insets.bottom, keyboardPadding) },
+        contentContainerStyle,
+      ]}
       {...rest}
     >
       {children}
-      <Animated.View style={{ height: animatedPadding }} />
-    </Animated.ScrollView>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+  },
+  footer: {
+    // Footer sits at bottom, animated marginBottom lifts it above keyboard
+  },
+});
