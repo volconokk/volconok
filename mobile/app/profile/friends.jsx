@@ -79,7 +79,7 @@ export default function ProfileFriendsScreen() {
   return (
     <PaperBackground>
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
-        <Header back title={t('profile.friends')} />
+        <Header back title={t('profile.friends')} backTo="/(tabs)/profile" />
         <FlatList
           contentContainerStyle={{
             paddingHorizontal: horizontalPadding,

@@ -5,17 +5,22 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '../theme/ThemeProvider';
 import { BackIcon } from './icons';
 
-export function Header({ title, right, back, subtitle, onBack }) {
+export function Header({ title, right, back, subtitle, backTo }) {
   const { colors, typography } = useTheme();
   const router = useRouter();
 
   const handleBack = () => {
-    if (onBack) {
-      onBack();
-    } else if (router.canGoBack()) {
+    // If explicit backTo is provided, use it
+    if (backTo) {
+      router.push(backTo);
+      return;
+    }
+    
+    // Try to go back in history
+    if (router.canGoBack()) {
       router.back();
     } else {
-      // Fallback to tabs if no history
+      // Fallback to feed
       router.replace('/(tabs)/feed');
     }
   };

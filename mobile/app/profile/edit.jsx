@@ -41,7 +41,7 @@ export default function EditProfileScreen() {
   return (
     <PaperBackground>
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
-        <Header back title={t('profile.edit')} />
+        <Header back title={t('profile.edit')} backTo="/(tabs)/profile" />
         <KeyboardAwareForm
           contentContainerStyle={{ paddingHorizontal: horizontalPadding, paddingVertical: 16 }}
         >
